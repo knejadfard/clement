@@ -5,10 +5,19 @@ project(PROJECT_C)
 # This library does not have any source files
 add_library(PROJECT_C INTERFACE)
 
-set(INCLUDE_DIRS "include" "/home/kian/compiled/llvm/include/c++/v1")
+set(BOOST_ROOT "~/binaries/boost-1.68")
+set(Boost_USE_STATIC_LIBS ON)
+set(BOOST_COMPONENTS thread system log_setup log filesystem)
+find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
-target_include_directories(PROJECT_C INTERFACE ${INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+set(LIBCPP_INCLUDE "~/binaries/llvm-7.0.0/include/c++/v1")
+
+set(INCLUDE_DIRS "${LIBCPP_INCLUDE}")
+list(APPEND INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+list(APPEND INCLUDE_DIRS "${PROJECT_C_SOURCE_DIR}/include")
+
+target_include_directories(PROJECT_C INTERFACE ${INCLUDE_DIRS})
 target_compile_options(PROJECT_C INTERFACE -std=c++17 -stdlib=libc++)
-target_link_libraries(PROJECT_C INTERFACE -nodefaultlibs -lc++ -lc++abi -lc -lm -lgcc_s -lgcc ${Boost_LIBRARIES} -lpthread)
+target_link_libraries(PROJECT_C INTERFACE -nodefaultlibs ${Boost_LIBRARIES} -lc++ -lc++abi -lm -lpthread -lc -lunwind -ldl)
 
 add_subdirectory(test)
