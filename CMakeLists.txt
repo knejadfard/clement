@@ -18,6 +18,6 @@ list(APPEND INCLUDE_DIRS "${PROJECT_C_SOURCE_DIR}/include")
 
 target_include_directories(PROJECT_C INTERFACE ${INCLUDE_DIRS})
 target_compile_options(PROJECT_C INTERFACE -std=c++17 -stdlib=libc++)
-target_link_libraries(PROJECT_C INTERFACE -nodefaultlibs ${Boost_LIBRARIES} -lc++ -lc++abi -lm -lpthread -lc -lunwind -ldl)
+target_link_libraries(PROJECT_C INTERFACE -nodefaultlibs ${Boost_LIBRARIES} -Wl,-Bstatic -lc++abi -lc++ -lunwind -Wl,-Bdynamic -lm -lc -ldl)
 
 add_subdirectory(test)
