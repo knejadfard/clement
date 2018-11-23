@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(PROJECT_C)
 
+option(BUILD_EXAMPLES "Build examples" ON)
 option(USE_LLVM "Use the LLVM toolchain" ON)
 
 # This library does not have any source files
@@ -29,3 +30,7 @@ else(USE_LLVM)
 endif(USE_LLVM)
 
 add_subdirectory(test)
+
+if(BUILD_EXAMPLES)
+    add_subdirectory(examples)
+endif(BUILD_EXAMPLES)
