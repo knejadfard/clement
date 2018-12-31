@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
         PROJECT_C::router r;
         r.get("/api/hello", handler{});
         PROJECT_C::server s("127.0.0.1", 8001);
-        s.router(r);
+        s.set_router(r);
         s.listen();
     }
     catch (std::exception const& e) {

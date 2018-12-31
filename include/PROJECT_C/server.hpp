@@ -139,7 +139,7 @@ public:
         }
     }
 
-    void router(router& r) {
+    void set_router(router& r) {
         router_ = r;
     }
 

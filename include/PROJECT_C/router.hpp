@@ -52,7 +52,7 @@ public:
         element_type item{route{"GET", r}, h};
         routes_.push_back(item);
     }
-    
+
     void
     post(std::string const& r, handler_type h)
     {
