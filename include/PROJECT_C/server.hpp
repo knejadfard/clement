@@ -33,28 +33,40 @@ class server {
     std::condition_variable handler_condition_;
     std::queue<socket_type> incoming_requests_;
 
-    // Thread that picks up accepted sockets from the queue and processes them
-    // one by one.
+    /*
+     * Thread that picks up accepted sockets from the queue and processes them
+     * one by one.
+     */
     std::thread handler_thread_;
 
     router router_;
+
+    /*
+     * Internal function that is executed in worker thread(s). This function will
+     * block the execution of the current thread until it is notified that the size
+     * of the incoming requests is greater than zero, which means there is at least
+     * one accepted connection that needs to be handled.
+     */
+    void work_();
 
 public:
 
     server(std::string const& address, unsigned short const& port)
             : address_{address},
             port_{port},
-            handler_thread_{&server::work, this},
+            handler_thread_{&server::work_, this},
             router_{} {
     }
 
-    // TODO comments
+    /*
+     * Start listening on the configured address/port and accept incoming connections.
+     */
     void listen();
 
-    // TODO comments
-    void work();
-
-    // TODO comments
+    /*
+     * Set the router to be used by this server for dispatching requests to appropriate
+     * handler, if there is any.
+     */
     void set_router(router& r);
 
 };
@@ -82,7 +94,7 @@ void server::listen() {
     }
 }
 
-void server::work() {
+void server::work_() {
     while(true) {
         std::unique_lock<std::mutex> lock(mutex_);
         // block thread until there are items to process
