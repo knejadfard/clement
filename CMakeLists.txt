@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(PROJECT_C)
 
+option(BUILD_DOC "Build documentation" ON)
 option(BUILD_EXAMPLES "Build examples" ON)
 option(USE_LLVM "Use the LLVM toolchain" ON)
 
@@ -11,6 +12,8 @@ add_library(PROJECT_C INTERFACE)
 set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
 find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+
+find_package(Doxygen)
 
 set(INCLUDE_DIRS "${LIBCPP_INCLUDE}")
 list(APPEND INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
@@ -34,3 +37,16 @@ add_subdirectory(test)
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif(BUILD_EXAMPLES)
+
+if(BUILD_DOC)
+    if(NOT DOXYGEN_FOUND)
+        message(FATAL_ERROR "Option for building documentation has been set to on but Doxygen was not found.")
+    endif(NOT DOXYGEN_FOUND)
+    if(NOT USE_LLVM)
+        message(FATAL_ERROR "Currently building Doxygen documentation is only supported for LLVM.")
+    endif(NOT USE_LLVM)
+    set(LLVM_ROOT $ENV{LLVM_ROOT})
+    set(DOXYGEN_INCLUDES "${PROJECT_C_SOURCE_DIR}/include")
+    configure_file(doxygen.conf.in doc/doxygen.conf)
+    add_custom_target(Doxygen ALL COMMAND Doxygen::doxygen doxygen.conf WORKING_DIRECTORY ./doc COMMENT "Building Doxygen documentation")
+endif(BUILD_DOC)
