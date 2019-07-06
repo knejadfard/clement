@@ -14,7 +14,7 @@
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/config.hpp>
 #include "logger.hpp"
-#include "response_writer.hpp"
+#include "writer.hpp"
 #include "router.hpp"
 #include "request_parser.hpp"
 
@@ -108,7 +108,7 @@ void server::work_() {
 
         lock.unlock();
 
-        response_writer writer(socket);
+        socket_writer writer(socket);
 
         request_parser request;
         try {

@@ -4,7 +4,7 @@
 #include "logger.hpp"
 #include "constants.hpp"
 #include "request_parser.hpp"
-#include "response_writer.hpp"
+#include "writer.hpp"
 #include "response_builder.hpp"
 #include "path.hpp"
 #include "route.hpp"

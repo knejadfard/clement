@@ -5,7 +5,6 @@
 #include <sstream>
 #include "PROJECT_C/PROJECT_C.hpp"
 
-
 class handler {
 
 public:
@@ -14,7 +13,7 @@ public:
     {
     }
 
-    void operator()(PROJECT_C::request_parser& request, PROJECT_C::response_writer& response_writer)
+    void operator()(PROJECT_C::request_parser& request, PROJECT_C::socket_writer& writer)
     {
         PROJECT_C::main_logger.info("Handling request: " + std::string(request));
         std::map<std::string, std::string> params = request.query_params();
@@ -32,6 +31,6 @@ public:
         PROJECT_C::response_builder res;
         res.result(PROJECT_C::http::status::ok);
         res.body("Hello World!");
-        response_writer.write(res.build());
+        writer.write(res.build());
     }
 };

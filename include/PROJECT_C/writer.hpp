@@ -3,21 +3,20 @@
 #include <iostream>
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
-#include "logger.hpp"
 
 namespace PROJECT_C {
 
 namespace http = boost::beast::http;
 
 template <class Stream>
-class basic_response_writer
+class basic_writer
 {
 
     Stream& stream_;
 
 public:
 
-    explicit basic_response_writer(Stream& stream)
+    explicit basic_writer(Stream& stream)
         : stream_{stream}
     {
     }
@@ -31,6 +30,6 @@ public:
     }
 };
 
-using response_writer = basic_response_writer<boost::asio::ip::tcp::socket>;
+using socket_writer = basic_writer<boost::asio::ip::tcp::socket>;
 
 } // namespace PROJECT_C

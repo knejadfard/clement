@@ -6,7 +6,7 @@
 #include <functional>
 #include <boost/beast/http.hpp>
 #include "route.hpp"
-#include "response_writer.hpp"
+#include "writer.hpp"
 #include "logger.hpp"
 #include "request_parser.hpp"
 
@@ -18,7 +18,7 @@ class basic_router
 
 public:
 
-    using handler_type = std::function<void(request_parser&, basic_response_writer<Stream>&)>;
+    using handler_type = std::function<void(request_parser&, basic_writer<Stream>&)>;
     using element_type = std::pair<route, handler_type>;
     using container_type = std::vector<element_type>;
     using iterator_type = typename container_type::iterator;
