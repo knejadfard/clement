@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(PROJECT_C)
 
-option(BUILD_DOC "Build documentation" ON)
-option(BUILD_EXAMPLES "Build examples" ON)
+option(BUILD_DOC "Build documentation" OFF)
+option(BUILD_EXAMPLES "Build examples" OFF)
 option(USE_LLVM "Use the LLVM toolchain" ON)
 
 # This library does not have any source files
