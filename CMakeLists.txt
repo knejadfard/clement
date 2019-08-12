@@ -11,7 +11,7 @@ add_library(PROJECT_C INTERFACE)
 
 set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
-find_package(Boost 1.68.0 EXACT REQUIRED COMPONENTS ${BOOST_COMPONENTS})
+find_package(Boost 1.67.0 EXACT REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
 find_package(Doxygen)
 
