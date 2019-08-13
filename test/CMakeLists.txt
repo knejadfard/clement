@@ -15,7 +15,7 @@ foreach(TEST_SRC ${TEST_SRCS})
 
     # Code coverage stuff
     target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping -fprofile-arcs -ftest-coverage)
-    target_link_libraries(${TEST_NAME} PRIVATE -llzma -fprofile-arcs -ftest-coverage)
+    target_link_libraries(${TEST_NAME} PRIVATE lzma -fprofile-arcs -ftest-coverage)
 
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
