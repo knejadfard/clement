@@ -13,32 +13,31 @@ foreach(TEST_SRC ${TEST_SRCS})
     target_include_directories(${TEST_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
     target_link_libraries(${TEST_NAME} PRIVATE PROJECT_C ${Boost_LIBRARIES})
 
-    # Code coverage stuff
+    # LLVM code coverage
     target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping -fprofile-arcs -ftest-coverage)
     target_link_libraries(${TEST_NAME} PRIVATE lzma -fprofile-arcs -ftest-coverage)
 
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 
-    # llvm-cov
-add_custom_target(${TEST_NAME}-ccov-preprocessing
-    COMMAND LLVM_PROFILE_FILE=${TEST_NAME}.profraw $<TARGET_FILE:${TEST_NAME}>
-    COMMAND llvm-profdata merge -sparse ${TEST_NAME}.profraw -o ${TEST_NAME}.profdata
-    DEPENDS ${TEST_NAME})
+    add_custom_target(${TEST_NAME}-ccov-preprocessing
+        COMMAND LLVM_PROFILE_FILE=${TEST_NAME}.profraw $<TARGET_FILE:${TEST_NAME}>
+        COMMAND llvm-profdata merge -sparse ${TEST_NAME}.profraw -o ${TEST_NAME}.profdata
+        DEPENDS ${TEST_NAME})
 
-add_custom_target(${TEST_NAME}-ccov-show
-    COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${TEST_NAME}.profdata -show-line-counts-or-regions ${CMAKE_SOURCE_DIR}/include
-    DEPENDS ${TEST_NAME}-ccov-preprocessing)
+    add_custom_target(${TEST_NAME}-ccov-show
+        COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${TEST_NAME}.profdata -show-line-counts-or-regions ${CMAKE_SOURCE_DIR}/include
+        DEPENDS ${TEST_NAME}-ccov-preprocessing)
 
-add_custom_target(${TEST_NAME}-ccov-report
-    COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${TEST_NAME}.profdata ${CMAKE_SOURCE_DIR}/include
-    DEPENDS ${TEST_NAME}-ccov-preprocessing)
+    add_custom_target(${TEST_NAME}-ccov-report
+        COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${TEST_NAME}.profdata ${CMAKE_SOURCE_DIR}/include
+        DEPENDS ${TEST_NAME}-ccov-preprocessing)
 
-add_custom_target(${TEST_NAME}-ccov
-    COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${TEST_NAME}.profdata -show-line-counts-or-regions -output-dir=${TEST_NAME}-llvm-cov -format="html" ${CMAKE_SOURCE_DIR}/include
-    DEPENDS ${TEST_NAME}-ccov-preprocessing)
+    add_custom_target(${TEST_NAME}-ccov
+        COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${TEST_NAME}.profdata -show-line-counts-or-regions -output-dir=${TEST_NAME}-llvm-cov -format="html" ${CMAKE_SOURCE_DIR}/include
+        DEPENDS ${TEST_NAME}-ccov-preprocessing)
 
-add_custom_command(TARGET ${TEST_NAME}-ccov POST_BUILD
-    COMMAND ;
-    COMMENT "Open ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TEST_NAME}-llvm-cov/index.html in your browser to view the coverage report."
-)
+    add_custom_command(TARGET ${TEST_NAME}-ccov POST_BUILD
+        COMMAND ;
+        COMMENT "Open ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TEST_NAME}-llvm-cov/index.html in your browser to view the coverage report."
+    )
 endforeach(TEST_SRC)
