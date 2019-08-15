@@ -13,7 +13,9 @@ set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
 find_package(Boost 1.67.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
-find_package(Doxygen)
+if(BUILD_DOC)
+    find_package(Doxygen)
+endif(BUILD_DOC)
 
 set(INCLUDE_DIRS "${LIBCPP_INCLUDE}")
 list(APPEND INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
