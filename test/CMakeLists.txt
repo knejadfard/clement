@@ -34,30 +34,30 @@ foreach(TEST_SRC ${TEST_SRCS})
             DEPENDS ccov-clean)
 
         add_custom_target(ccov-run-${TEST_NAME}
-            COMMAND LLVM_PROFILE_FILE=${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profraw $<TARGET_FILE:${TEST_NAME}>
+            COMMAND LLVM_PROFILE_FILE=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw $<TARGET_FILE:${TEST_NAME}>
             COMMAND echo "-object=$<TARGET_FILE:${TEST_NAME}>" >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
-            COMMAND echo "${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profraw " >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list
+            COMMAND echo "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw " >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list
             DEPENDS ccov-preprocessing ${TEST_NAME})
 
         add_custom_target(ccov-processing-${TEST_NAME}
-            COMMAND ${LLVM_ROOT}/bin/llvm-profdata merge -sparse ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profraw -o ${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profdata
+            COMMAND ${LLVM_ROOT}/bin/llvm-profdata merge -sparse ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw -o ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
             DEPENDS ccov-run-${TEST_NAME})
 
         add_custom_target(ccov-show-${TEST_NAME}
-            COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profdata -show-line-counts-or-regions
+            COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata -show-line-counts-or-regions
             DEPENDS ccov-processing-${TEST_NAME})
 
         add_custom_target(ccov-report-${TEST_NAME}
-            COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profdata
+            COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata ${CMAKE_SOURCE_DIR}
             DEPENDS ccov-processing-${TEST_NAME})
 
         add_custom_target(ccov-${TEST_NAME}
             COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}>
-                  -instr-profile=${CMAKE_CURRENT_BINARY_DIR}/${TEST_NAME}.profdata
+                  -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
                   -show-line-counts-or-regions
                   -output-dir=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}
                   -format="html"
-                  ${EXCLUDE_REGEX}
+                  ${CMAKE_SOURCE_DIR}
             DEPENDS ccov-processing-${TEST_NAME})
         add_custom_command(
             TARGET ccov-${TEST_NAME} POST_BUILD
