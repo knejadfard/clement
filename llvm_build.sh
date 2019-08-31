@@ -16,15 +16,26 @@ fi
 
 echo "Number of make jobs to run: $NUM_JOBS"
 
+# --------------------------------------------------------------------------------------------------
+# Configure CMake
+# --------------------------------------------------------------------------------------------------
 # The following environment variables must be present
 #     LLVM_ROOT -> pointing to the root directory of LLVM toolchain that has clang and clang++
 #     BOOST_ROOT -> pointing to the root directory of the compiled Boost library
 
+# Build a list of CMake options
+CMAKE_OPTS="-DBUILD_DOC=OFF -DCODE_COVERAGE=ON"
+CMAKE_OPTS="${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_ROOT}"
+CMAKE_OPTS="${CMAKE_OPTS} -DCMAKE_BUILD_TYPE=Debug"
+CMAKE_OPTS="${CMAKE_OPTS} -DCMAKE_COVERAGE_OUTPUT_DIRECTORY=./coverage"
+CMAKE_OPTS="${CMAKE_OPTS} -DLLVM_ROOT=${LLVM_ROOT}"
+
+CMAKE_ENV="CC=${LLVM_ROOT}/bin/clang CXX=${LLVM_ROOT}/bin/clang++ "
+
 # --------------------------------------------------------------------------------------------------
 # Run CMake
 # --------------------------------------------------------------------------------------------------
-CMAKE_ENV="CC=${LLVM_ROOT}/bin/clang CXX=${LLVM_ROOT}/bin/clang++ "
-env ${CMAKE_ENV} cmake -DBOOST_ROOT=${BOOST_ROOT} ../
+env ${CMAKE_ENV} cmake ${CMAKE_OPTS} ../
 
 # --------------------------------------------------------------------------------------------------
 # Build
