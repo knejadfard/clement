@@ -3,8 +3,6 @@ cmake_minimum_required(VERSION 3.5)
 project(PROJECT_C_test)
 enable_testing()
 
-find_package(Boost 1.67.0 REQUIRED COMPONENTS unit_test_framework)
-
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
 foreach(TEST_SRC ${TEST_SRCS})
     get_filename_component(TEST_NAME ${TEST_SRC} NAME_WE)
