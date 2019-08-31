@@ -14,10 +14,6 @@ set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
 find_package(Boost 1.67.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
-if(BUILD_DOC)
-    find_package(Doxygen)
-endif(BUILD_DOC)
-
 set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
 
 set(INCLUDE_DIRS "${LIBCPP_INCLUDE}")
@@ -44,6 +40,7 @@ if(BUILD_EXAMPLES)
 endif(BUILD_EXAMPLES)
 
 if(BUILD_DOC)
+    find_package(Doxygen)
     if(NOT DOXYGEN_FOUND)
         message(FATAL_ERROR "Option for building documentation has been set to on but Doxygen was not found.")
     endif(NOT DOXYGEN_FOUND)
