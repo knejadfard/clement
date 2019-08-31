@@ -16,8 +16,8 @@ foreach(TEST_SRC ${TEST_SRCS})
     target_link_libraries(${TEST_NAME} PRIVATE PROJECT_C)
 
     if(CODE_COVERAGE)
-        target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping -fprofile-arcs -ftest-coverage)
-        target_link_libraries(${TEST_NAME} PRIVATE -fprofile-arcs -ftest-coverage)
+        target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping)
+        target_link_libraries(${TEST_NAME} PRIVATE -fprofile-instr-generate)
 
         add_custom_target(ccov-clean
             COMMAND rm
