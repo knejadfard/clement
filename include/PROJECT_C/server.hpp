@@ -49,6 +49,8 @@ class server {
      */
     void work_();
 
+    int parse_request_(boost::asio::ip::tcp::socket&, request_parser&, socket_writer&);
+
 public:
 
     server(std::string const& address, unsigned short const& port)
@@ -111,18 +113,8 @@ void server::work_() {
         socket_writer writer(socket);
 
         request_parser request;
-        try {
-            request.parse(socket);
-        }
-        catch(std::exception& e) {
-            std::string msg = "Error parsing request: " +
-                    std::string(e.what());
-            main_logger.error(msg);
-            http::response<http::string_body> response{
-                http::status::internal_server_error, 1};
-            response.body() = msg;
-            writer.write(std::move(response));
-            socket.shutdown(socket_type::shutdown_send);
+        int result = parse_request(socket, request, writer);
+        if (result == 1) {
             continue;
         }
 
@@ -164,6 +156,29 @@ void server::work_() {
 
 inline void server::set_router(router& r) {
     router_ = r;
+}
+
+// Returns 0 on success
+// Returns 1 on failure, in which case the response is sent to the socket
+// and the handling loop should go to the next iteration.
+inline int server::parse_request_(boost::asio::ip::tcp::socket& socket,
+        request_parser& request, socket_writer& writer)
+{
+    try {
+        request.parse(socket);
+        return 0;
+    }
+    catch(std::exception& e) {
+        std::string msg = "Error parsing request: " +
+                std::string(e.what());
+        main_logger.error(msg);
+        http::response<http::string_body> response{
+            http::status::internal_server_error, 1};
+        response.body() = msg;
+        writer.write(std::move(response));
+        socket.shutdown(socket_type::shutdown_send);
+        return 1;
+    }
 }
 
 } // namespace PROJECT_C
