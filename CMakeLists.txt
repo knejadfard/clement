@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(PROJECT_C)
 
+option(USE_LLVM "Use the LLVM toolchain" ON)
 option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
-option(USE_LLVM "Use the LLVM toolchain" ON)
+option(CODE_COVERAGE "Generate code coverage report" OFF)
 
 # This library does not have any source files
 add_library(PROJECT_C INTERFACE)
