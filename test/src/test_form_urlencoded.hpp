@@ -1,21 +1,21 @@
 #include <boost/test/included/unit_test.hpp>
 
+#include "PROJECT_C/utility/form_urlencoded.hpp"
 #include <map>
 #include <string>
-#include "PROJECT_C/utility/form_urlencoded.hpp"
 
 BOOST_AUTO_TEST_SUITE(form_urlencoded_test_suite)
 
 BOOST_AUTO_TEST_CASE(test_parsing) {
-    std::string str{"name1=kian&name2=nejadfard&age=25"};
-    PROJECT_C::utility::form_urlencoded form{str};
-    BOOST_TEST(form.params()["name1"] == "kian");
+  std::string str{"name1=kian&name2=nejadfard&age=25"};
+  PROJECT_C::utility::form_urlencoded form{str};
+  BOOST_TEST(form.params()["name1"] == "kian");
 }
 
 BOOST_AUTO_TEST_CASE(test_parsing_with_decode) {
-    std::string str{"fullname=kian%20nejadfard&age=25"};
-    PROJECT_C::utility::form_urlencoded form{str};
-    BOOST_TEST(form.params()["fullname"] == "kian nejadfard");
+  std::string str{"fullname=kian%20nejadfard&age=25"};
+  PROJECT_C::utility::form_urlencoded form{str};
+  BOOST_TEST(form.params()["fullname"] == "kian nejadfard");
 }
 
 BOOST_AUTO_TEST_SUITE_END()
