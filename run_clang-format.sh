@@ -1,3 +1,3 @@
 #!/bin/sh
 
-find . -regex '.*\.\(cpp\|hpp\|cu\|c\|h\)' -exec clang-format -style=file -i {} \;
+find . -iname *.hpp -o -iname *.cpp | xargs clang-format -i
