@@ -1,4 +1,4 @@
-#define BOOST_TEST_MODULE PROJECT_C_unit_tests
+#define BOOST_TEST_MODULE server_unit_tests
 #include <boost/test/included/unit_test.hpp>
 
 #include "test_base64.hpp"
