@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(PROJECT_C_test)
+project(server_test)
 enable_testing()
 
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
@@ -11,7 +11,7 @@ foreach(TEST_SRC ${TEST_SRCS})
     target_include_directories(${TEST_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
     target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libc++)
-    target_link_libraries(${TEST_NAME} PRIVATE PROJECT_C)
+    target_link_libraries(${TEST_NAME} PRIVATE server)
 
     if(CODE_COVERAGE)
         target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping)
