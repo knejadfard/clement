@@ -1,7 +1,7 @@
 #pragma once
 
 #include "logger.hpp"
-#include "request_parser.hpp"
+#include "request.hpp"
 #include "route.hpp"
 #include "writer.hpp"
 #include <boost/beast/http.hpp>
@@ -15,7 +15,7 @@ namespace server {
     template <class Stream> class basic_router {
 
       public:
-        using handler_type = std::function<void(request_parser&, basic_writer<Stream>&)>;
+        using handler_type = std::function<void(request&, basic_writer<Stream>&)>;
         using element_type = std::pair<route, handler_type>;
         using container_type = std::vector<element_type>;
         using iterator_type = typename container_type::iterator;

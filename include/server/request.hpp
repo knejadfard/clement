@@ -15,7 +15,7 @@ namespace server {
 
     namespace http = boost::beast::http;
 
-    class request_parser {
+    class request {
 
         boost::beast::http::verb verb_;
         std::string target_;
@@ -36,12 +36,14 @@ namespace server {
 
         void parse_path_params();
 
+        // TODO is an instance of request copy-able and/or move-able? Might need to disable these.
+
       public:
-        request_parser() {}
+        request() {}
 
-        request_parser(boost::asio::ip::tcp::socket& socket) { parse(socket); }
+        void parse_header(boost::beast::http::request<boost::beast::http::empty_body>&);
 
-        void parse(boost::asio::ip::tcp::socket&);
+        void read_body(boost::beast::http::request<boost::beast::http::dynamic_body>&);
 
         void header(boost::beast::http::field const& name, std::string const& value) {
             headers_[name] = value;
@@ -75,7 +77,7 @@ namespace server {
 
         std::map<std::string, std::string> path_params() const { return path_params_; }
 
-        operator std::string() const { return "[" + verb_string() + "] " + target_; }
+        explicit operator std::string() const { return "[" + verb_string() + "] " + target_; }
 
         std::string content_type() const { return content_type_; }
 
@@ -87,32 +89,22 @@ namespace server {
         route mapped_route() const { return mapped_route_; }
     };
 
-    void request_parser::parse(boost::asio::ip::tcp::socket& socket) {
-        boost::beast::flat_buffer buffer;
-
-        // read and parse the header of the request
-        boost::beast::http::request_parser<boost::beast::http::empty_body> header_parser;
-        boost::beast::http::read_header(socket, buffer, header_parser);
-        boost::beast::http::request<boost::beast::http::empty_body> request_header =
-            header_parser.get();
+    void request::parse_header(boost::beast::http::request<boost::beast::http::empty_body>& request_header) {
         read_fields(request_header);
-
         parse_target(request_header);
         verb_ = request_header.method();
         parse_content_type(request_header);
+    }
 
-        // read body of the request
-        boost::beast::http::request_parser<boost::beast::http::dynamic_body> request_parser{
-            std::move(header_parser)};
-        boost::beast::http::read(socket, buffer, request_parser);
-        boost::beast::http::request<boost::beast::http::dynamic_body> request =
-            request_parser.get();
-        boost::beast::multi_buffer body_buffer = request.body();
-        stream_ << boost::beast::buffers(body_buffer.data());
+    void request::read_body(boost::beast::http::request<boost::beast::http::dynamic_body>& request_body) {
+        boost::beast::multi_buffer body_buffer = request_body.body();
+        // TODO what if the request body should not be treated as text/string?
+        // TODO performance concerns: what if the body is too large? Needs performance tests.
+        stream_ << boost::beast::make_printable(body_buffer.cdata());
     }
 
     template <class Body>
-    void request_parser::read_fields(boost::beast::http::request<Body>& request_header) {
+    void request::read_fields(boost::beast::http::request<Body>& request_header) {
         for (typename boost::beast::http::request<Body>::const_iterator it = request_header.begin();
              it != request_header.end(); ++it) {
             header(it->name(), it->value().to_string());
@@ -122,7 +114,7 @@ namespace server {
     // TODO would it be more robust/cleaner to use boost's tokenizer and related
     // methods for parsing the target string?
     template <class Body>
-    void request_parser::parse_target(boost::beast::http::request<Body>& request_header) {
+    void request::parse_target(boost::beast::http::request<Body>& request_header) {
         std::string unparsed_target = request_header.target().to_string();
         size_t qmark_index = unparsed_target.find("?");
         if (qmark_index == std::string::npos) {
@@ -154,7 +146,7 @@ namespace server {
     }
 
     template <class Body>
-    void request_parser::parse_content_type(boost::beast::http::request<Body>& request_header) {
+    void request::parse_content_type(boost::beast::http::request<Body>& request_header) {
         std::string raw_content_type = header("content-type");
         size_t end = raw_content_type.find(";");
         if (end == std::string::npos) {
@@ -164,7 +156,7 @@ namespace server {
         }
     }
 
-    void request_parser::parse_path_params() {
+    void request::parse_path_params() {
         path requested_path{target_};
         path mapped_path = mapped_route_.get_path();
         path::container_type requested_frags = requested_path.get_fragments();

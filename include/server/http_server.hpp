@@ -1,5 +1,5 @@
 #include "logger.hpp"
-#include "request_parser.hpp"
+#include "request.hpp"
 #include "router.hpp"
 #include "writer.hpp"
 #include <boost/asio/ip/tcp.hpp>
@@ -101,9 +101,21 @@ namespace server {
 
             socket_writer writer(socket);
 
-            request_parser request;
+            request request;
             try {
-                request.parse(socket);
+                // read and parse the header of the request
+                boost::beast::flat_buffer buffer;
+                boost::beast::http::request_parser<boost::beast::http::empty_body> header_parser;
+                boost::beast::http::read_header(socket, buffer, header_parser);
+                boost::beast::http::request<boost::beast::http::empty_body> request_header = header_parser.get();
+                request.parse_header(request_header);
+
+                boost::beast::http::request_parser<boost::beast::http::dynamic_body> request_parser{
+                        std::move(header_parser)};
+                boost::beast::http::read(socket, buffer, request_parser);
+                boost::beast::http::request<boost::beast::http::dynamic_body> request_body =
+                        request_parser.get();
+                request.read_body(request_body);
             } catch (std::exception& e) {
                 std::string msg = "Error parsing request: " + std::string(e.what());
                 main_logger.error(msg);
