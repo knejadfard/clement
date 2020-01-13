@@ -10,7 +10,7 @@ class handler {
   public:
     handler() {}
 
-    void operator()(server::request_parser& request, server::socket_writer& writer) {
+    void operator()(server::request& request, server::socket_writer& writer) {
         server::main_logger.info("Handling request: " + std::string(request));
         std::map<std::string, std::string> params = request.query_params();
         for (std::map<std::string, std::string>::const_iterator it = params.cbegin();
