@@ -1,7 +1,7 @@
 language: cpp
 os: linux
 dist: disco
-compiler: clang++-libc++
+compiler: clang++
 addons:
     apt:
         packages:
@@ -38,7 +38,7 @@ install:
   - export PATH=${DEPS_DIR}/b2/bin:${PATH}
   - b2 --version || true # b2 --version returns 1
   - cd ${BOOST_DIR}
-  - b2 toolset=clang link=static cxxflags="-stdlib=libc++ -std=c++14" linkflags="-stdlib=libc++" -j 8
+  - b2 toolset=clang link=static cxxflags="-stdlib=libc++ -std=c++17" linkflags="-stdlib=libc++" -j 8
   ############################################################################
   # Install a recent CMake
   ############################################################################
