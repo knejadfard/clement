@@ -11,6 +11,7 @@ addons:
 env:
     - BOOST_VERSION=1.72.0
 install:
+  - WORK_DIR=$(pwd)
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
@@ -48,7 +49,7 @@ install:
   - cmake --version
 script:
     - clang++ -v
-    - cd ~/knejadfard/server
+    - cd ${WORK_DIR}
     - mkdir build && cd build
     - cmake -DBOOST_ROOT=${BOOST_DIR} ../
     - make
