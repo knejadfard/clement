@@ -8,10 +8,10 @@ addons:
             - libboost-all-dev
             - cmake-data
             - cmake
-env:
-    - CC=clang-7
-      CXX=clang++-7
+            - libc++
+            - libc++-dev
 script:
+    - clang++ -v
     - mkdir build && cd build
     - cmake ../
     - make
