@@ -1,11 +1,11 @@
 language: cpp
 os: linux
-dist: bionic
+dist: disco
 addons:
     apt:
         packages:
             - clang-7
-            - libboost1.71-all-dev
+            - libboost-all-dev
 env:
     - CC=clang-7
       CXX=clang++-7
