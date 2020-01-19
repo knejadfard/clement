@@ -1,0 +1,11 @@
+language: cpp
+os: linux
+dist: bionic
+addons:
+    apt:
+        packages:
+            - clang-7
+            - boost1.67
+env:
+    - CC=clang-7
+      CXX=clang++-7
