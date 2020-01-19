@@ -12,6 +12,7 @@ add_library(server INTERFACE)
 
 set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
+find_package(Threads REQUIRED)
 find_package(Boost 1.67.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
 set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
