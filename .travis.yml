@@ -6,6 +6,8 @@ addons:
         packages:
             - clang-7
             - libboost-all-dev
+            - cmake-data
+            - cmake
 env:
     - CC=clang-7
       CXX=clang++-7
