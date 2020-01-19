@@ -5,7 +5,7 @@ addons:
     apt:
         packages:
             - clang-7
-            - boost1.67
+            - libboost1.71-all-dev
 env:
     - CC=clang-7
       CXX=clang++-7
