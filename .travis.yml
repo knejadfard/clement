@@ -11,7 +11,6 @@ addons:
 env:
     - BOOST_VERSION=1.72.0
 install:
-  - WORK_DIR=$(pwd)
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
@@ -35,6 +34,11 @@ install:
       fi
       CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
     fi
+  - (cd ${BOOST_DIR}/tools/build && ./bootstrap.sh && ./b2 install --prefix=${DEPS_DIR}/b2)
+  - export PATH=${DEPS_DIR}/b2/bin:${PATH}
+  - b2 --version || true # b2 --version returns 1
+  - cd ${BOOST_DIR}
+  - b2 toolset=clang link=static cxxflags="-stdlib=libc++ -std=c++14" linkflags="-stdlib=libc++" -j 8
   ############################################################################
   # Install a recent CMake
   ############################################################################
@@ -49,7 +53,7 @@ install:
   - cmake --version
 script:
     - clang++ -v
-    - cd ${WORK_DIR}
+    - cd ${TRAVIS_BUILD_DIR}
     - mkdir build && cd build
     - cmake -DBOOST_ROOT=${BOOST_DIR} ../
     - make
