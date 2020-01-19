@@ -9,7 +9,7 @@ addons:
             - libc++
             - libc++-dev
 env:
-    - BOOST_VERSION=1.72
+    - BOOST_VERSION=1.72.0
 install:
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
