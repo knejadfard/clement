@@ -89,7 +89,7 @@ before_script:
 script:
     - cd ${TRAVIS_BUILD_DIR}
     - mkdir build && cd build
-    - cmake -DBOOST_ROOT=${BOOST_DIR} ../
+    - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
     - make
     - cd ${TRAVIS_BUILD_DIR}/build/test
 after_success:
