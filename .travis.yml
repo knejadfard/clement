@@ -1,14 +1,17 @@
 language: cpp
-os: linux
-dist: bionic
-compiler: clang++
-before_install:
-    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-    - sudo apt-get -q update
-env:
-    - BOOST_VERSION=1.72.0
+matrix:
+    include:
+        - os: linux
+          dist: bionic
+          compiler: clang++
+          before_install:
+              - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+              - sudo apt-get -q update
+              - sudo apt-get install clang-8 libc++1-8 libc++abi1-8 libc++-8-dev
+              - sudo ldconfig
+          env:
+              - BOOST_VERSION=1.72.0
 install:
-  - sudo apt-get install clang-8 libc++1-8 libc++abi1-8 libc++-8-dev
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
