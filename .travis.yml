@@ -17,7 +17,7 @@ matrix:
                       - libc++abi1-8
           env:
               - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=clang CXX=clang++"
+              - MATRIX_EVAL="CC=clang-8 CXX=clang++-8"
               - TOOLSET=clang
               - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libc++"
