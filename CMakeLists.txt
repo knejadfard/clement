@@ -12,6 +12,7 @@ add_library(server INTERFACE)
 
 set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
+find_package(Threads REQUIRED)
 find_package(Boost 1.67.0 REQUIRED COMPONENTS ${BOOST_COMPONENTS})
 
 set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
@@ -23,7 +24,7 @@ list(APPEND INCLUDE_DIRS "${server_SOURCE_DIR}/include")
 target_include_directories(server INTERFACE ${INCLUDE_DIRS})
 
 target_compile_options(server INTERFACE -std=c++17)
-target_link_libraries(server INTERFACE ${Boost_LIBRARIES})
+target_link_libraries(server INTERFACE Threads::Threads ${Boost_LIBRARIES})
 
 if(USE_LLVM)
     target_compile_options(server INTERFACE -stdlib=libc++)
