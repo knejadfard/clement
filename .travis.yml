@@ -86,4 +86,4 @@ script:
 after_success:
     - cd ${TRAVIS_BUILD_DIR}/build
     - make ccov-lcov-all_tests
-    - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report
+    - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
