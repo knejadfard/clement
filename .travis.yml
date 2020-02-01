@@ -1,6 +1,6 @@
 language: cpp
 os: linux
-dist: disco
+dist: bionic
 compiler: clang++
 addons:
     apt:
