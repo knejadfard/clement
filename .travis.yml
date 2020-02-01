@@ -21,7 +21,7 @@ matrix:
           compiler: gcc
           env:
               - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
+              - MATRIX_EVAL="CC=gcc CXX=g++"
               - TOOLSET=gcc
               - CMAKE_OPTS="-DUSE_LLVM=OFF -DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libstdc++"
