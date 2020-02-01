@@ -4,6 +4,8 @@ dist: disco
 compiler: clang++
 addons:
     apt:
+        sources:
+            - ubuntu-toolchain-r-test
         packages:
             - clang-8
             - libc++
