@@ -40,7 +40,7 @@ install:
   - export PATH=${DEPS_DIR}/b2/bin:${PATH}
   - b2 --version || true # b2 --version returns 1
   - cd ${BOOST_DIR}
-  - b2 toolset=clang link=static cxxflags="-stdlib=libc++ -std=c++17" linkflags="-stdlib=libc++" -j 8
+  - b2 toolset=clang link=static cxxflags="-stdlib=libc++ -std=c++17" linkflags="-stdlib=libc++" -j 4 --with-libraries=system,filesystem,log_setup,log,thread
   ############################################################################
   # Install a recent CMake
   ############################################################################
