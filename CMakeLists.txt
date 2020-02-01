@@ -30,7 +30,7 @@ if(USE_LLVM)
     target_compile_options(server INTERFACE -stdlib=libc++)
     target_link_libraries(server INTERFACE -nodefaultlibs -Wl,-Bstatic -lc++abi -lc++ -lunwind -Wl,-Bdynamic -lm -lc -ldl)
 else(USE_LLVM)
-    target_compile_options(server INTERFACE -static-libgcc -static-libstdc++)
+    target_compile_options(server INTERFACE -static-libgcc)
     target_link_libraries(server INTERFACE -lm -lc -lgcc -lgcc_s)
 endif(USE_LLVM)
 
