@@ -24,8 +24,8 @@ matrix:
               - MATRIX_EVAL="CC=gcc CXX=g++"
               - TOOLSET=gcc
               - CMAKE_OPTS="-DUSE_LLVM=OFF -DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
-              - LFLAGS="-stdlib=libstdc++"
-              - CXXFLAGS="-stdlib=libstdc++ -std=c++17"
+              - LFLAGS=""
+              - CXXFLAGS="-std=c++17"
           before_install:
               - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
               - sudo apt-get -q update
