@@ -5,12 +5,7 @@ compiler: clang++
 before_install:
     - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
     - sudo apt-get -q update
-addons:
-    apt:
-        packages:
-            - clang-8
-            - libc++
-            - libc++-dev
+    - sudo apt-get install clang-8 libc++1-8 libc++abi1-8 libc++-8-dev
 env:
     - BOOST_VERSION=1.72.0
 install:
