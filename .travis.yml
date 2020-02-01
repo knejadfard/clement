@@ -8,7 +8,7 @@ matrix:
               - BOOST_VERSION=1.72.0
               - MATRIX_EVAL="CC=clang CXX=clang++"
               - TOOLSET=clang
-              - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
+              - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libc++"
               - CXXFLAGS="-stdlib=libc++ -std=c++17"
           before_install:
