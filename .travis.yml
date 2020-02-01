@@ -2,10 +2,11 @@ language: cpp
 os: linux
 dist: bionic
 compiler: clang++
+before_install:
+    - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+    - sudo apt-get -q update
 addons:
     apt:
-        sources:
-            - ubuntu-toolchain-r-test
         packages:
             - clang-8
             - libc++
