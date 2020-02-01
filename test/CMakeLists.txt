@@ -10,56 +10,54 @@ foreach(TEST_SRC ${TEST_SRCS})
     add_executable(${TEST_NAME} ${TEST_SRC})
     target_include_directories(${TEST_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
-    target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libc++)
+    if(USE_LLVM)
+        target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libc++)
+    else(USE_LLVM)
+        target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libstdc++)
+    endif(USE_LLVM)
+
     target_link_libraries(${TEST_NAME} PRIVATE server)
 
     if(CODE_COVERAGE)
-        target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping)
-        target_link_libraries(${TEST_NAME} PRIVATE -fprofile-instr-generate)
+        if(USE_LLVM)
+            target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping)
+            target_link_libraries(${TEST_NAME} PRIVATE -fprofile-instr-generate)
 
-        add_custom_target(ccov-clean
-            COMMAND rm
-            -f
-            ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
-            COMMAND rm
-            -f
-            ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list)
+            add_custom_target(generate-prof-${TEST_NAME}
+                COMMAND rm -f ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
+                COMMAND rm -f ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list
+                COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
 
-        add_custom_target(ccov-preprocessing
-            COMMAND ${CMAKE_COMMAND}
-            -E
-            make_directory ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}
-            DEPENDS ccov-clean)
+                COMMAND LLVM_PROFILE_FILE=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw $<TARGET_FILE:${TEST_NAME}>
+                COMMAND echo "-object=$<TARGET_FILE:${TEST_NAME}>" >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
+                COMMAND echo "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw " >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list
 
-        add_custom_target(ccov-run-${TEST_NAME}
-            COMMAND LLVM_PROFILE_FILE=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw $<TARGET_FILE:${TEST_NAME}>
-            COMMAND echo "-object=$<TARGET_FILE:${TEST_NAME}>" >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
-            COMMAND echo "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw " >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list
-            DEPENDS ccov-preprocessing ${TEST_NAME})
+                COMMAND ${LLVM_ROOT}/bin/llvm-profdata merge -sparse ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw -o ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
+            )
 
-        add_custom_target(ccov-processing-${TEST_NAME}
-            COMMAND ${LLVM_ROOT}/bin/llvm-profdata merge -sparse ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw -o ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
-            DEPENDS ccov-run-${TEST_NAME})
+            add_custom_target(ccov-show-${TEST_NAME}
+                COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata -show-line-counts-or-regions
+                DEPENDS generate-prof-${TEST_NAME})
 
-        add_custom_target(ccov-show-${TEST_NAME}
-            COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata -show-line-counts-or-regions
-            DEPENDS ccov-processing-${TEST_NAME})
+            add_custom_target(ccov-report-${TEST_NAME}
+                COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata ${CMAKE_SOURCE_DIR}
+                DEPENDS generate-prof-${TEST_NAME})
 
-        add_custom_target(ccov-report-${TEST_NAME}
-            COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata ${CMAKE_SOURCE_DIR}
-            DEPENDS ccov-processing-${TEST_NAME})
+            add_custom_target(ccov-html-${TEST_NAME}
+                COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}>
+                      -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
+                      -show-line-counts-or-regions
+                      -output-dir=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}
+                      -format="html"
+                      ${CMAKE_SOURCE_DIR}
+                DEPENDS generate-prof-${TEST_NAME})
 
-        add_custom_target(ccov-${TEST_NAME}
-            COMMAND llvm-cov show $<TARGET_FILE:${TEST_NAME}>
-                  -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
-                  -show-line-counts-or-regions
-                  -output-dir=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}
-                  -format="html"
-                  ${CMAKE_SOURCE_DIR}
-            DEPENDS ccov-processing-${TEST_NAME})
-        add_custom_command(
-            TARGET ccov-${TEST_NAME} POST_BUILD
-            COMMAND ;
-            COMMENT "Open ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}/index.html in your browser to view the coverage report.")
-    endif()
+            add_custom_target(ccov-lcov-${TEST_NAME}
+                COMMAND llvm-cov export -format=lcov -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata $<TARGET_FILE:${TEST_NAME}> ${CMAKE_SOURCE_DIR} > ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.lcov
+                DEPENDS generate-prof-${TEST_NAME})
+        else(USE_LLVM)
+            target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-arcs -ftest-coverage)
+            target_link_libraries(${TEST_NAME} PRIVATE -fprofile-arcs)
+        endif(USE_LLVM)
+    endif(CODE_COVERAGE)
 endforeach(TEST_SRC)
