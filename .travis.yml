@@ -15,7 +15,8 @@ matrix:
               - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
               - sudo apt-get -q update
               - sudo apt-get install clang-8 libc++1-8 libc++abi1-8 libc++-8-dev
-              - sudo unlink /usr/bin/g++
+              - sudo unlink /usr/bin/clang
+              - sudo unlink /usr/bin/clang++
               - sudo ln -s clang-8 /usr/bin/clang
               - sudo ln -s clang /usr/bin/clang++
         - os: linux
