@@ -13,7 +13,7 @@ foreach(TEST_SRC ${TEST_SRCS})
     if(USE_LLVM)
         target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libc++)
     else(USE_LLVM)
-        target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libstdc++)
+        target_compile_options(${TEST_NAME} PRIVATE -std=c++17)
     endif(USE_LLVM)
 
     target_link_libraries(${TEST_NAME} PRIVATE server)
