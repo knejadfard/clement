@@ -24,7 +24,7 @@ list(APPEND INCLUDE_DIRS "${server_SOURCE_DIR}/include")
 target_include_directories(server INTERFACE ${INCLUDE_DIRS})
 
 target_compile_options(server INTERFACE -std=c++17)
-target_link_libraries(server INTERFACE ${Boost_LIBRARIES})
+target_link_libraries(server INTERFACE Threads::Threads ${Boost_LIBRARIES})
 
 if(USE_LLVM)
     target_compile_options(server INTERFACE -stdlib=libc++)
