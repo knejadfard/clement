@@ -32,7 +32,7 @@ foreach(TEST_SRC ${TEST_SRCS})
                 COMMAND echo "-object=$<TARGET_FILE:${TEST_NAME}>" >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/binaries.list
                 COMMAND echo "${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw " >> ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/profraw.list
 
-                COMMAND ${LLVM_ROOT}/bin/llvm-profdata merge -sparse ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw -o ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
+                COMMAND llvm-profdata merge -sparse ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profraw -o ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata
             )
 
             add_custom_target(ccov-show-${TEST_NAME}
