@@ -4,14 +4,33 @@ matrix:
         - os: linux
           dist: bionic
           compiler: clang++
+          env:
+              - BOOST_VERSION=1.72.0
+              - MATRIX_EVAL="CC=clang-8 CXX=clang-8"
+              - TOOLSET=clang
+              - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
           before_install:
               - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
               - sudo apt-get -q update
               - sudo apt-get install clang-8 libc++1-8 libc++abi1-8 libc++-8-dev
               - sudo ldconfig
+          before_script:
+              - ${CXX} -v
+        - os: linux
+          dist: bionic
+          compiler: gcc
           env:
               - BOOST_VERSION=1.72.0
+              - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
+              - TOOLSET=gcc
+              - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
+          before_install:
+              - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+              - sudo apt-get -q update
+              - sudo apt-get install g++-9
+              - sudo ldconfig
 install:
+  - eval "${MATRIX_EVAL}"
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
@@ -40,7 +59,7 @@ install:
   - export PATH=${DEPS_DIR}/b2/bin:${PATH}
   - b2 --version || true # b2 --version returns 1
   - cd ${BOOST_SRC_DIR}
-  - b2 toolset=clang link=static cxxflags="-stdlib=libc++ -std=c++17" linkflags="-stdlib=libc++" -j 4 --with-system --with-filesystem --with-log --with-thread --prefix=${BOOST_DIR} install
+  - b2 toolset=${TOOLSET} link=static cxxflags="-stdlib=libc++ -std=c++17" linkflags="-stdlib=libc++" -j 4 --with-system --with-filesystem --with-log --with-thread --prefix=${BOOST_DIR} install
 
   ############################################################################
   # Install a recent CMake
@@ -54,9 +73,12 @@ install:
       brew install cmake || brew upgrade cmake
     fi
   - cmake --version
+before_script:
+    - ${CXX} -v
 script:
-    - clang++ -v
     - cd ${TRAVIS_BUILD_DIR}
     - mkdir build && cd build
     - cmake -DBOOST_ROOT=${BOOST_DIR} ../
     - make
+    - cd build/test
+    - ./all_server_tests
