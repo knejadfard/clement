@@ -22,6 +22,8 @@ matrix:
               - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libc++"
               - CXXFLAGS="-stdlib=libc++ -std=c++17"
+          before_install:
+              - dpkg-query -L clang-8
         - os: linux
           dist: bionic
           compiler: gcc
