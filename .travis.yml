@@ -17,13 +17,11 @@ matrix:
                       - libc++abi1-8
           env:
               - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=clang-8 CXX=clang++-8"
+              - MATRIX_EVAL="CC=/usr/bin/clang-8 CXX=/usr/bin/clang++-8"
               - TOOLSET=clang
               - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libc++"
               - CXXFLAGS="-stdlib=libc++ -std=c++17"
-          before_install:
-              - dpkg-query -L clang-8
         - os: linux
           dist: bionic
           compiler: gcc
