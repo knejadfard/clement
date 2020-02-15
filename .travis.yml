@@ -16,6 +16,7 @@ matrix:
                       - libc++-7-dev
                       - libc++abi-7-dev
                       - libunwind-dev
+                      - liblzma-dev
           env:
               - BOOST_VERSION=1.72.0
               - MATRIX_EVAL="CC=/usr/bin/clang-7 CXX=/usr/bin/clang++-7"
