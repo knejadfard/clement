@@ -20,7 +20,7 @@ matrix:
               - MATRIX_EVAL="CC=/usr/bin/clang-8 CXX=/usr/bin/clang++-8"
               - TOOLSET=clang
               - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
-              - LFLAGS="-stdlib=libc++"
+              - LFLAGS="-stdlib=libc++ -lc++abi"
               - CXXFLAGS="-stdlib=libc++ -std=c++17"
         - os: linux
           dist: bionic
@@ -40,8 +40,6 @@ matrix:
               - sudo ln -s g++-9 /usr/bin/g++
 install:
   - eval "${MATRIX_EVAL}"
-  - which clang
-  - which clang++
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
@@ -49,7 +47,7 @@ install:
   - mkdir -p ${DEPS_DIR} && cd ${DEPS_DIR}
 
   ############################################################################
-  # Install Boost headers
+  # Compile and install Boost libraries
   ############################################################################
   - |
     BOOST_SRC_DIR=${DEPS_DIR}/boost-${BOOST_VERSION}-source
@@ -67,8 +65,7 @@ install:
       CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
     fi
   - cd ${BOOST_SRC_DIR}/tools/build
-  - ./bootstrap.sh --with-toolset=${TOOLSET} || cat bootstrap.log
-  - cd ${BOOST_SRC_DIR}
+  - ./bootstrap.sh --with-toolset=${TOOLSET} || (cat bootstrap.log && exit 1)
   - ./b2 toolset=${TOOLSET} install --prefix=${DEPS_DIR}/b2
   - export PATH=${DEPS_DIR}/b2/bin:${PATH}
   - b2 --version || true # b2 --version returns 1
