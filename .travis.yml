@@ -66,7 +66,9 @@ install:
       fi
       CMAKE_OPTIONS+=" -DBOOST_ROOT=${BOOST_DIR}"
     fi
-  - (cd ${BOOST_SRC_DIR}/tools/build && ./bootstrap.sh --with-toolset=${TOOLSET} && ./b2 toolset=${TOOLSET} install --prefix=${DEPS_DIR}/b2)
+  - cd ${BOOST_SRC_DIR}/tools/build && ./bootstrap.sh --with-toolset=${TOOLSET}
+  - ./b2 toolset=${TOOLSET} install --prefix=${DEPS_DIR}/b2
+  - cat bootstrap.log
   - export PATH=${DEPS_DIR}/b2/bin:${PATH}
   - b2 --version || true # b2 --version returns 1
   - cd ${BOOST_SRC_DIR}
