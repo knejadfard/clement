@@ -68,6 +68,7 @@ install:
     fi
   - cd ${BOOST_SRC_DIR}/tools/build
   - ./bootstrap.sh --with-toolset=${TOOLSET} || cat bootstrap.log
+  - cd ${BOOST_SRC_DIR}
   - ./b2 toolset=${TOOLSET} install --prefix=${DEPS_DIR}/b2
   - export PATH=${DEPS_DIR}/b2/bin:${PATH}
   - b2 --version || true # b2 --version returns 1
