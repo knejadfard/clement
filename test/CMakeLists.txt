@@ -10,16 +10,16 @@ foreach(TEST_SRC ${TEST_SRCS})
     add_executable(${TEST_NAME} ${TEST_SRC})
     target_include_directories(${TEST_NAME} PRIVATE ${Boost_INCLUDE_DIRS})
 
-    if(USE_LLVM)
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         target_compile_options(${TEST_NAME} PRIVATE -std=c++17 -stdlib=libc++)
-    else(USE_LLVM)
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         target_compile_options(${TEST_NAME} PRIVATE -std=c++17)
-    endif(USE_LLVM)
+    endif()
 
     target_link_libraries(${TEST_NAME} PRIVATE server)
 
     if(CODE_COVERAGE)
-        if(USE_LLVM)
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
             target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-instr-generate -fcoverage-mapping)
             target_link_libraries(${TEST_NAME} PRIVATE -fprofile-instr-generate)
 
@@ -55,9 +55,9 @@ foreach(TEST_SRC ${TEST_SRCS})
             add_custom_target(ccov-lcov-${TEST_NAME}
                 COMMAND llvm-cov export -format=lcov -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata $<TARGET_FILE:${TEST_NAME}> ${CMAKE_SOURCE_DIR} > ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.lcov
                 DEPENDS generate-prof-${TEST_NAME})
-        else(USE_LLVM)
+        else()
             target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-arcs -ftest-coverage)
             target_link_libraries(${TEST_NAME} PRIVATE -fprofile-arcs)
-        endif(USE_LLVM)
-    endif(CODE_COVERAGE)
+        endif()
+    endif()
 endforeach(TEST_SRC)
