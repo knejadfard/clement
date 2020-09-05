@@ -8,18 +8,18 @@ matrix:
               apt:
                   update: true
                   sources:
-                      - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-8 main'
+                      - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
                         key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
                   packages:
-                      - clang-7
-                      - libc++1-7
-                      - libc++-7-dev
-                      - libc++abi-7-dev
+                      - clang-10
+                      - libc++1-10
+                      - libc++-10-dev
+                      - libc++abi-10-dev
                       - libunwind-dev
                       - liblzma-dev
           env:
               - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=/usr/bin/clang-7 CXX=/usr/bin/clang++-7"
+              - MATRIX_EVAL="CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10"
               - TOOLSET=clang
               - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libc++ -lc++abi"
