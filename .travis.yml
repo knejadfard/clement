@@ -98,7 +98,6 @@ script:
     - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
     - make
     - cd ${TRAVIS_BUILD_DIR}/build/test
-    - ./all_tests
 after_success:
     - cd ${TRAVIS_BUILD_DIR}/build
     - make ccov-lcov-all_tests
