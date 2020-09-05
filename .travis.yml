@@ -1,51 +1,59 @@
 language: cpp
 matrix:
-    include:
-        - os: linux
-          dist: bionic
-          addons:
-              apt:
-                  update: true
-                  sources:
-                      - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
-                        key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-                  packages:
-                      - clang-10
-                      - libc++1-10
-                      - libc++-10-dev
-                      - libc++abi-10-dev
-                      - libunwind-dev
-                      - liblzma-dev
-          env:
-              - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10"
-              - TOOLSET=clang
-              - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
-              - LFLAGS="-stdlib=libc++ -lc++abi"
-              - CXXFLAGS="-stdlib=libc++ -std=c++17"
-          before_install:
-              - sudo unlink /usr/bin/llvm-profdata
-              - sudo unlink /usr/bin/llvm-cov
-              - sudo ln -s /usr/bin/llvm-profdata-10 /usr/bin/llvm-profdata
-              - sudo ln -s /usr/bin/llvm-cov-10 /usr/bin/llvm-cov
-        - os: linux
-          dist: bionic
-          compiler: gcc
-          env:
-              - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=gcc CXX=g++"
-              - TOOLSET=gcc
-              - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
-              - LFLAGS=" "
-              - CXXFLAGS="-std=c++17"
-          before_install:
-              - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-              - sudo apt-get -q update
-              - sudo apt-get install g++-9
-              - sudo unlink /usr/bin/g++
-              - sudo ln -s g++-9 /usr/bin/g++
+  include:
+    - os: linux
+      dist: bionic
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - clang-10
+            - libc++1-10
+            - libc++-10-dev
+            - libc++abi-10-dev
+            - libunwind-dev
+            - liblzma-dev
+      env:
+        - BOOST_VERSION=1.72.0
+        - MATRIX_EVAL="CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10"
+        - TOOLSET=clang
+        - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
+        - LFLAGS="-stdlib=libc++ -lc++abi"
+        - CXXFLAGS="-stdlib=libc++ -std=c++17"
+      before_install:
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      env:
+        - BOOST_VERSION=1.72.0
+        - MATRIX_EVAL="CC=gcc CXX=g++"
+        - TOOLSET=gcc
+        - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
+        - LFLAGS=" "
+        - CXXFLAGS="-std=c++17"
+      before_install:
+        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+        - sudo apt-get -q update
 install:
   - eval "${MATRIX_EVAL}"
+  - |
+    if [[ $CXX = g++ ]]; then
+      export CXX="g++-9" CC="gcc-9"
+      sudo apt-get install g++-9
+      sudo unlink /usr/bin/g++
+      sudo ln -s g++-9 /usr/bin/g++
+    fi
+  - |
+    if [[ $CXX = clang++ ]]; then
+      export CXX="clang++-10" CC="clang-10"
+      sudo unlink /usr/bin/llvm-cov
+      sudo ln -s /usr/bin/llvm-cov-10 /usr/bin/llvm-cov
+      sudo unlink /usr/bin/llvm-profdata
+      sudo ln -s /usr/bin/llvm-profdata-10 /usr/bin/llvm-profdata
+    fi
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
@@ -91,15 +99,15 @@ install:
     fi
   - cmake --version
 before_script:
-    - ${CXX} -v
+  - ${CXX} -v
+  - llvm-profdata merge --version
 script:
-    - cd ${TRAVIS_BUILD_DIR}
-    - mkdir build && cd build
-    - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
-    - make
-    - cd ${TRAVIS_BUILD_DIR}/build/test
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir build && cd build
+  - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
+  - make
+  - cd ${TRAVIS_BUILD_DIR}/build/test
 after_success:
-    - cd ${TRAVIS_BUILD_DIR}/build
-    - llvm-profdata merge --version
-    - make ccov-lcov-all_tests
-    - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
+  - cd ${TRAVIS_BUILD_DIR}/build
+  - make ccov-lcov-all_tests
+  - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
