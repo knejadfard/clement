@@ -100,5 +100,6 @@ script:
     - cd ${TRAVIS_BUILD_DIR}/build/test
 after_success:
     - cd ${TRAVIS_BUILD_DIR}/build
+    - llvm-profdata merge --version
     - make ccov-lcov-all_tests
     - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
