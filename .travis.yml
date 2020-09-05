@@ -39,17 +39,18 @@ matrix:
         - sudo apt-get -q update
 install:
   - eval "${MATRIX_EVAL}"
+  - mkdir "${TRAVIS_BUILD_DIR}/llvm-bin"
   - |
     if [[ $TOOLSET = gcc ]]; then
       sudo apt-get install g++-9
     fi
   - |
     if [[ $TOOLSET = clang ]]; then
-      sudo unlink /usr/bin/llvm-cov
-      sudo ln -s /usr/bin/llvm-cov-10 /usr/bin/llvm-cov
-      sudo unlink /usr/bin/llvm-profdata
-      sudo ln -s /usr/bin/llvm-profdata-10 /usr/bin/llvm-profdata
+      ln -s /usr/bin/llvm-cov-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-cov"
+      ln -s /usr/bin/llvm-profdata-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata"
     fi
+  - export PATH="${TRAVIS_BUILD_DIR}/llvm-bin:$PATH"
+
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
