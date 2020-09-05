@@ -35,7 +35,7 @@ matrix:
               - BOOST_VERSION=1.72.0
               - MATRIX_EVAL="CC=gcc CXX=g++"
               - TOOLSET=gcc
-              - CMAKE_OPTS="-DUSE_LLVM=OFF -DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
+              - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
               - LFLAGS=" "
               - CXXFLAGS="-std=c++17"
           before_install:
