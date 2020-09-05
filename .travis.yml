@@ -50,6 +50,7 @@ install:
       ln -s /usr/bin/llvm-profdata-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata"
     fi
   - export PATH="${TRAVIS_BUILD_DIR}/llvm-bin:$PATH"
+  - ${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata merge --version
 
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
