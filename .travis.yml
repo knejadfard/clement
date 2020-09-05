@@ -24,6 +24,15 @@ matrix:
               - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
               - LFLAGS="-stdlib=libc++ -lc++abi"
               - CXXFLAGS="-stdlib=libc++ -std=c++17"
+          before_install:
+              - sudo unlink /usr/bin/clang
+              - sudo unlink /usr/bin/clang++
+              - sudo unlink /usr/bin/llvm-profdata
+              - sudo unlink /usr/bin/llvm-cov
+              - sudo ln -s /usr/bin/clang-10 /usr/bin/clang
+              - sudo ln -s /usr/bin/clang++-10 /usr/bin/clang++
+              - sudo ln -s /usr/bin/llvm-profdata-10 /usr/bin/llvm-profdata
+              - sudo ln -s /usr/bin/llvm-cov-10 /usr/bin/llvm-cov
         - os: linux
           dist: bionic
           compiler: gcc
