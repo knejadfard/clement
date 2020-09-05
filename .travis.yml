@@ -41,11 +41,11 @@ install:
   - eval "${MATRIX_EVAL}"
   - mkdir "${TRAVIS_BUILD_DIR}/llvm-bin"
   - |
-    if [[ $TOOLSET = gcc ]]; then
+    if [[ $TOOLSET -eq gcc ]]; then
       sudo apt-get install g++-9
     fi
   - |
-    if [[ $TOOLSET = clang ]]; then
+    if [[ $TOOLSET -eq clang ]]; then
       ln -s /usr/bin/llvm-cov-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-cov"
       ln -s /usr/bin/llvm-profdata-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata"
     fi
