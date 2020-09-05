@@ -96,6 +96,8 @@ install:
     fi
   - cmake --version
 before_script:
+  - echo $PATH
+  - ${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata merge --version
   - ${CXX} -v
   - llvm-profdata merge --version
 script:
