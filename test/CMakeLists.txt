@@ -40,7 +40,7 @@ foreach(TEST_SRC ${TEST_SRCS})
                 DEPENDS generate-prof-${TEST_NAME})
 
             add_custom_target(ccov-report-${TEST_NAME}
-                COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata ${CMAKE_SOURCE_DIR}
+                COMMAND llvm-cov report $<TARGET_FILE:${TEST_NAME}> -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata "${CMAKE_SOURCE_DIR}/include"
                 DEPENDS generate-prof-${TEST_NAME})
 
             add_custom_target(ccov-html-${TEST_NAME}
@@ -49,11 +49,11 @@ foreach(TEST_SRC ${TEST_SRCS})
                       -show-line-counts-or-regions
                       -output-dir=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}
                       -format="html"
-                      ${CMAKE_SOURCE_DIR}
+                      "${CMAKE_SOURCE_DIR}/include"
                 DEPENDS generate-prof-${TEST_NAME})
 
             add_custom_target(ccov-lcov-${TEST_NAME}
-                COMMAND llvm-cov export -format=lcov -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata $<TARGET_FILE:${TEST_NAME}> ${CMAKE_SOURCE_DIR} > ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.lcov
+                COMMAND llvm-cov export -format=lcov -instr-profile=${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.profdata $<TARGET_FILE:${TEST_NAME}> "${CMAKE_SOURCE_DIR}/include" > ${CMAKE_COVERAGE_OUTPUT_DIRECTORY}/${TEST_NAME}.lcov
                 DEPENDS generate-prof-${TEST_NAME})
         else()
             target_compile_options(${TEST_NAME} PRIVATE -fno-use-cxa-atexit -fprofile-arcs -ftest-coverage)
