@@ -1,4 +1,4 @@
-Clement is a C++ library built on top of Boost.Beast to provide high-level facilities for writing client/clement applications.
+Clement is a C++ library built on top of Boost.Beast to provide high-level facilities for writing client/server applications.
 
 # Build Status
 [![Build Status](https://travis-ci.com/knejadfard/clement.svg?branch=master)](https://travis-ci.com/knejadfard/clement) [![codecov](https://codecov.io/gh/knejadfard/clement/branch/master/graph/badge.svg)](https://codecov.io/gh/knejadfard/clement)
