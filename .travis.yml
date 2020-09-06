@@ -1,47 +1,72 @@
 language: cpp
 matrix:
-    include:
-        - os: linux
-          dist: bionic
-          compiler: clang++
-          addons:
-              apt:
-                  update: true
-                  sources:
-                      - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-8 main'
-                        key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
-                  packages:
-                      - clang-7
-                      - libc++1-7
-                      - libc++-7-dev
-                      - libc++abi-7-dev
-                      - libunwind-dev
-                      - liblzma-dev
-          env:
-              - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=/usr/bin/clang-7 CXX=/usr/bin/clang++-7"
-              - TOOLSET=clang
-              - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
-              - LFLAGS="-stdlib=libc++ -lc++abi"
-              - CXXFLAGS="-stdlib=libc++ -std=c++17"
-        - os: linux
-          dist: bionic
-          compiler: gcc
-          env:
-              - BOOST_VERSION=1.72.0
-              - MATRIX_EVAL="CC=gcc CXX=g++"
-              - TOOLSET=gcc
-              - CMAKE_OPTS="-DUSE_LLVM=OFF -DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
-              - LFLAGS=" "
-              - CXXFLAGS="-std=c++17"
-          before_install:
-              - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-              - sudo apt-get -q update
-              - sudo apt-get install g++-9
-              - sudo unlink /usr/bin/g++
-              - sudo ln -s g++-9 /usr/bin/g++
-install:
+  include:
+    - os: linux
+      dist: bionic
+      compiler: clang
+      addons:
+        apt:
+          update: true
+          sources:
+            - sourceline: 'deb https://apt.llvm.org/bionic/ llvm-toolchain-bionic-10 main'
+              key_url: 'https://apt.llvm.org/llvm-snapshot.gpg.key'
+          packages:
+            - llvm-10
+            - clang-10
+            - libc++1-10
+            - libc++-10-dev
+            - libc++abi-10-dev
+            - libunwind-dev
+            - liblzma-dev
+      env:
+        - BOOST_VERSION=1.72.0
+        - MATRIX_EVAL="CC=clang-10 && CXX=clang++-10"
+        - TOOLSET=clang
+        - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
+        - LFLAGS="-stdlib=libc++ -lc++abi"
+        - CXXFLAGS="-stdlib=libc++ -std=c++17"
+    - os: linux
+      dist: bionic
+      compiler: gcc
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
+      env:
+        - BOOST_VERSION=1.72.0
+        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
+        - TOOLSET=gcc
+        - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
+        - LFLAGS=" "
+        - CXXFLAGS="-std=c++17"
+before_install:
   - eval "${MATRIX_EVAL}"
+install:
+  ############################################################################
+  # Create toolset-specific bin directory with symlinks to desired version
+  # of toolset executables. This is to avoid using executables of older
+  # toolset versions.
+  ############################################################################
+  - export TOOLSET_BIN="${TRAVIS_BUILD_DIR}/toolset-bin"
+  - mkdir "$TOOLSET_BIN"
+  - |
+    if [[ "$TOOLSET" == "gcc" ]]; then
+      ln -s /usr/bin/gcc-9 "${TOOLSET_BIN}/gcc"
+      ln -s /usr/bin/g++-9 "${TOOLSET_BIN}/g++"
+    fi
+  - |
+    if [[ "$TOOLSET" == "clang" ]]; then
+      ln -s /usr/lib/llvm-10/bin/clang "${TOOLSET_BIN}/clang"
+      ln -s /usr/lib/llvm-10/bin/clang++ "${TOOLSET_BIN}/clang++"
+      ln -s /usr/lib/llvm-10/bin/llvm-cov "${TOOLSET_BIN}/llvm-cov"
+      ln -s /usr/lib/llvm-10/bin/llvm-profdata "${TOOLSET_BIN}/llvm-profdata"
+    fi
+  # prepend the toolset bin directory to PATH so that it takes priority.
+  - export PATH="${TOOLSET_BIN}:$PATH"
+
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
   ############################################################################
@@ -87,14 +112,24 @@ install:
     fi
   - cmake --version
 before_script:
-    - ${CXX} -v
+  # Used as debugging information so we know what specific version is "visible"
+  - |
+    if [[ "$TOOLSET" == "clang" ]]; then
+      clang --version
+      llvm-profdata merge --version
+    elif [[ "$TOOLSET" == "gcc" ]]; then
+      g++ --version
+    fi
 script:
-    - cd ${TRAVIS_BUILD_DIR}
-    - mkdir build && cd build
-    - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
-    - make
-    - cd ${TRAVIS_BUILD_DIR}/build/test
+  - cd ${TRAVIS_BUILD_DIR}
+  - mkdir build && cd build
+  - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
+  - make
+  - ${TRAVIS_BUILD_DIR}/build/test/all_tests
 after_success:
-    - cd ${TRAVIS_BUILD_DIR}/build
-    - make ccov-lcov-all_tests
-    - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
+  - |
+    if [[ "$TOOLSET" == "clang" ]]; then
+      cd ${TRAVIS_BUILD_DIR}/build
+      make ccov-lcov-all_tests
+      bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
+    fi
