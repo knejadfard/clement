@@ -44,19 +44,22 @@ matrix:
 before_install:
   - eval "${MATRIX_EVAL}"
 install:
-  - mkdir "${HOME}/toolset-bin"
+  - export TOOLSET_BIN="${TRAVIS_BUILD_DIR}/toolset-bin"
+  - mkdir "$TOOLSET_BIN" 
   - |
     if [[ "$TOOLSET" == "gcc" ]]; then
-      ln -s /usr/bin/gcc-9 "${HOME}/toolset-bin/gcc"
-      ln -s /usr/bin/g++-9 "${HOME}/toolset-bin/g++"
+      ln -s /usr/bin/gcc-9 "${TOOLSET_BIN}/gcc"
+      ln -s /usr/bin/g++-9 "${TOOLSET_BIN}/g++"
     fi
   - |
     if [[ "$TOOLSET" == "clang" ]]; then
-      ln -s /usr/bin/llvm-cov-10 "${HOME}/toolset-bin/llvm-cov"
-      ln -s /usr/bin/llvm-profdata-10 "${HOME}/toolset-bin/llvm-profdata"
-      ${HOME}/toolset-bin/llvm-profdata merge --version
+      ln -s /usr/bin/clang-10 "${TOOLSET_BIN}/clang"
+      ln -s /usr/bin/clang++-10 "${TOOLSET_BIN}/clang++"
+      ln -s /usr/bin/llvm-cov-10 "${TOOLSET_BIN}/llvm-cov"
+      ln -s /usr/bin/llvm-profdata-10 "${TOOLSET_BIN}/llvm-profdata"
+      ${TOOLSET_BIN}/llvm-profdata merge --version
     fi
-  - export PATH="${HOME}/toolset-bin:$PATH"
+  - export PATH="${TOOLSET_BIN}:$PATH"
 
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
@@ -104,9 +107,15 @@ install:
   - cmake --version
 before_script:
   - echo $PATH
-  - ${HOME}/toolset-bin/llvm-profdata merge --version
   - ${CXX} -v
-  - llvm-profdata merge --version
+  - |
+    if [[ "$TOOLSET" == "clang" ]]; then
+      clang --version
+      ${TOOLSET_BIN}/llvm-profdata merge --version
+      llvm-profdata merge --version
+    elif [[ "$TOOLSET" == "gcc" ]]; then
+      g++ --version
+    fi
 script:
   - cd ${TRAVIS_BUILD_DIR}
   - mkdir build && cd build
