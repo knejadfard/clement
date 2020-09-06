@@ -45,6 +45,11 @@ matrix:
 before_install:
   - eval "${MATRIX_EVAL}"
 install:
+  ############################################################################
+  # Create toolset-specific bin directory with symlinks to desired version
+  # of toolset executables. This is to avoid using executables of older
+  # toolset versions.
+  ############################################################################
   - export TOOLSET_BIN="${TRAVIS_BUILD_DIR}/toolset-bin"
   - mkdir "$TOOLSET_BIN"
   - |
@@ -59,8 +64,8 @@ install:
       ln -s /usr/lib/llvm-10/bin/llvm-cov "${TOOLSET_BIN}/llvm-cov"
       ln -s /usr/lib/llvm-10/bin/llvm-profdata "${TOOLSET_BIN}/llvm-profdata"
     fi
+  # prepend the toolset bin directory to PATH so that it takes priority.
   - export PATH="${TOOLSET_BIN}:$PATH"
-  - ls -lh /usr/bin | grep "llvm"
 
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
@@ -107,12 +112,10 @@ install:
     fi
   - cmake --version
 before_script:
-  - echo $PATH
-  - ${CXX} -v
+  # Used as debugging information so we know what specific version is "visible"
   - |
     if [[ "$TOOLSET" == "clang" ]]; then
       clang --version
-      ${TOOLSET_BIN}/llvm-profdata merge --version
       llvm-profdata merge --version
     elif [[ "$TOOLSET" == "gcc" ]]; then
       g++ --version
@@ -122,8 +125,11 @@ script:
   - mkdir build && cd build
   - cmake ${CMAKE_OPTS} -DBOOST_ROOT=${BOOST_DIR} ../
   - make
-  - cd ${TRAVIS_BUILD_DIR}/build/test
+  - ${TRAVIS_BUILD_DIR}/build/test/all_tests
 after_success:
-  - cd ${TRAVIS_BUILD_DIR}/build
-  - make ccov-lcov-all_tests
-  - bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
+  - |
+    if [[ "$TOOLSET" == "clang" ]]; then
+      cd ${TRAVIS_BUILD_DIR}/build
+      make ccov-lcov-all_tests
+      bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
+    fi
