@@ -3,7 +3,7 @@
 #include <boost/beast/http.hpp>
 #include <string>
 
-namespace server {
+namespace clement {
 
     template <class Body> class basic_response_builder {
 
@@ -48,4 +48,4 @@ namespace server {
 
     using response_builder = basic_response_builder<boost::beast::http::string_body>;
 
-} // namespace server
+} // namespace clement

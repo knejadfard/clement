@@ -5,7 +5,7 @@
 #include <string>
 #include <vector>
 
-namespace server {
+namespace clement {
 
     class path {
 
@@ -135,4 +135,4 @@ namespace server {
         return out;
     }
 
-} // namespace server
+} // namespace clement

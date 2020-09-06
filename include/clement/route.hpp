@@ -6,7 +6,7 @@
 #include <ostream>
 #include <string>
 
-namespace server {
+namespace clement {
 
     class route {
 
@@ -60,4 +60,4 @@ namespace server {
 
     bool operator!=(route const& lhs, route const& rhs) { return !(lhs == rhs); }
 
-} // namespace server
+} // namespace clement

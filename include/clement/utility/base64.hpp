@@ -5,7 +5,7 @@
 #include <boost/archive/iterators/binary_from_base64.hpp>
 #include <boost/archive/iterators/transform_width.hpp>
 
-namespace server {
+namespace clement {
 
     namespace utility {
 
@@ -26,4 +26,4 @@ namespace server {
 
     } // namespace utility
 
-} // namespace server
+} // namespace clement

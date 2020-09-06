@@ -10,7 +10,7 @@
 #include <utility>
 #include <vector>
 
-namespace server {
+namespace clement {
 
     template <class Stream> class basic_router {
 
@@ -78,4 +78,4 @@ namespace server {
 
     using router = basic_router<boost::asio::ip::tcp::socket>;
 
-} // namespace server
+} // namespace clement

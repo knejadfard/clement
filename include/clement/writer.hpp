@@ -4,7 +4,7 @@
 #include <boost/beast/http.hpp>
 #include <iostream>
 
-namespace server {
+namespace clement {
 
     namespace http = boost::beast::http;
 
@@ -23,4 +23,4 @@ namespace server {
 
     using socket_writer = basic_writer<boost::asio::ip::tcp::socket>;
 
-} // namespace server
+} // namespace clement

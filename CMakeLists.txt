@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(server)
+project(clement)
 
 option(BUILD_DOC "Build documentation" OFF)
 option(BUILD_EXAMPLES "Build examples" OFF)
 option(CODE_COVERAGE "Generate code coverage report" OFF)
 
 # This library does not have any source files
-add_library(server INTERFACE)
+add_library(clement INTERFACE)
 
 set(Boost_USE_STATIC_LIBS ON)
 set(BOOST_COMPONENTS thread system log_setup log filesystem)
@@ -18,19 +18,19 @@ set(CMAKE_COVERAGE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/ccov)
 
 set(INCLUDE_DIRS "${LIBCPP_INCLUDE}")
 list(APPEND INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
-list(APPEND INCLUDE_DIRS "${server_SOURCE_DIR}/include")
+list(APPEND INCLUDE_DIRS "${clement_SOURCE_DIR}/include")
 
-target_include_directories(server INTERFACE ${INCLUDE_DIRS})
+target_include_directories(clement INTERFACE ${INCLUDE_DIRS})
 
-target_compile_options(server INTERFACE -std=c++17)
-target_link_libraries(server INTERFACE Threads::Threads ${Boost_LIBRARIES})
+target_compile_options(clement INTERFACE -std=c++17)
+target_link_libraries(clement INTERFACE Threads::Threads ${Boost_LIBRARIES})
 
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    target_compile_options(server INTERFACE -stdlib=libc++)
-    target_link_libraries(server INTERFACE -nodefaultlibs -Wl,-Bstatic -lc++abi -lc++ -lunwind -llzma -Wl,-Bdynamic -lm -lc -ldl)
+    target_compile_options(clement INTERFACE -stdlib=libc++)
+    target_link_libraries(clement INTERFACE -nodefaultlibs -Wl,-Bstatic -lc++abi -lc++ -lunwind -llzma -Wl,-Bdynamic -lm -lc -ldl)
 elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(server INTERFACE -static-libgcc)
-    target_link_libraries(server INTERFACE -lm -lc -lgcc -lgcc_s)
+    target_compile_options(clement INTERFACE -static-libgcc)
+    target_link_libraries(clement INTERFACE -lm -lc -lgcc -lgcc_s)
 endif()
 
 add_subdirectory(test)
@@ -48,7 +48,7 @@ if(BUILD_DOC)
         message(FATAL_ERROR "Currently building Doxygen documentation is only supported for LLVM.")
     endif()
     set(LLVM_ROOT $ENV{LLVM_ROOT})
-    set(DOXYGEN_INCLUDES "${server_SOURCE_DIR}/include")
+    set(DOXYGEN_INCLUDES "${clement_SOURCE_DIR}/include")
     configure_file(doxygen.conf.in doc/doxygen.conf)
     add_custom_target(Doxygen ALL COMMAND Doxygen::doxygen doxygen.conf WORKING_DIRECTORY ./doc COMMENT "Building Doxygen documentation")
 endif()

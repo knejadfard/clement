@@ -11,7 +11,7 @@
 #include <sstream>
 #include <string>
 
-namespace server {
+namespace clement {
 
     namespace http = boost::beast::http;
 
@@ -119,9 +119,9 @@ namespace server {
         size_t qmark_index = unparsed_target.find("?");
         if (qmark_index == std::string::npos) {
             // no query parameters are present, assume everything is target string
-            target_ = server::utility::percent_decode(unparsed_target);
+            target_ = clement::utility::percent_decode(unparsed_target);
         } else {
-            target_ = server::utility::percent_decode(unparsed_target.substr(0, qmark_index));
+            target_ = clement::utility::percent_decode(unparsed_target.substr(0, qmark_index));
             if (qmark_index != unparsed_target.size() - 1) {
                 std::string raw_query_params = unparsed_target.substr(qmark_index + 1);
                 size_t begin = 0, end;
@@ -135,8 +135,9 @@ namespace server {
                         throw std::runtime_error("Error parsing target string: " + unparsed_target);
                     }
                     std::string param_name =
-                        server::utility::percent_decode(query_param.substr(0, equal_sign_index));
-                    std::string param_value = server::utility::percent_decode(
+                        clement::utility::percent_decode(query_param.substr(0, equal_sign_index));
+                    std::string param_value =
+                        clement::utility::percent_decode(
                         query_param.substr(equal_sign_index + 1));
                     query_params_[param_name] = param_value;
                     begin = end + 1;
@@ -178,4 +179,4 @@ namespace server {
         }
     }
 
-} // namespace server
+} // namespace clement
