@@ -19,7 +19,7 @@ matrix:
             - liblzma-dev
       env:
         - BOOST_VERSION=1.72.0
-        - MATRIX_EVAL="CC=/usr/bin/clang-10 && CXX=/usr/bin/clang++-10"
+        - MATRIX_EVAL="CC=clang-10 && CXX=clang++-10"
         - TOOLSET=clang
         - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
         - LFLAGS="-stdlib=libc++ -lc++abi"
@@ -45,7 +45,7 @@ before_install:
   - eval "${MATRIX_EVAL}"
 install:
   - export TOOLSET_BIN="${TRAVIS_BUILD_DIR}/toolset-bin"
-  - mkdir "$TOOLSET_BIN" 
+  - mkdir "$TOOLSET_BIN"
   - |
     if [[ "$TOOLSET" == "gcc" ]]; then
       ln -s /usr/bin/gcc-9 "${TOOLSET_BIN}/gcc"
@@ -57,7 +57,6 @@ install:
       ln -s /usr/bin/clang++-10 "${TOOLSET_BIN}/clang++"
       ln -s /usr/bin/llvm-cov-10 "${TOOLSET_BIN}/llvm-cov"
       ln -s /usr/bin/llvm-profdata-10 "${TOOLSET_BIN}/llvm-profdata"
-      ${TOOLSET_BIN}/llvm-profdata merge --version
     fi
   - export PATH="${TOOLSET_BIN}:$PATH"
 
