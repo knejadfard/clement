@@ -3,6 +3,7 @@ matrix:
   include:
     - os: linux
       dist: bionic
+      compiler: clang
       addons:
         apt:
           update: true
@@ -23,10 +24,16 @@ matrix:
         - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
         - LFLAGS="-stdlib=libc++ -lc++abi"
         - CXXFLAGS="-stdlib=libc++ -std=c++17"
-      before_install:
     - os: linux
       dist: bionic
       compiler: gcc
+      addons:
+        apt:
+          update: true
+          sources:
+            - ubuntu-toolchain-r-test
+          packages:
+            - g++-9
       env:
         - BOOST_VERSION=1.72.0
         - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
@@ -34,23 +41,24 @@ matrix:
         - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
         - LFLAGS=" "
         - CXXFLAGS="-std=c++17"
-      before_install:
-        - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-        - sudo apt-get -q update
-install:
+before_install:
   - eval "${MATRIX_EVAL}"
-  - mkdir "${TRAVIS_BUILD_DIR}/llvm-bin"
+install:
+  - mkdir "${HOME}/toolset-bin"
   - |
     if [[ $TOOLSET -eq gcc ]]; then
-      sudo apt-get install g++-9
+      ln -s /usr/bin/gcc-9 "${HOME}/toolset-bin/llvm-cov"
+      ln -s /usr/bin/llvm-profdata-10 "${HOME}/toolset-bin/llvm-profdata"
+      export PATH="${HOME}/toolset-bin:$PATH"
     fi
   - |
     if [[ $TOOLSET -eq clang ]]; then
-      ln -s /usr/bin/llvm-cov-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-cov"
-      ln -s /usr/bin/llvm-profdata-10 "${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata"
+      ln -s /usr/bin/llvm-cov-10 "${HOME}/toolset-bin/llvm-cov"
+      ln -s /usr/bin/llvm-profdata-10 "${HOME}/toolset-bin/llvm-profdata"
+      export PATH="${HOME}/toolset-bin:$PATH"
+      ${HOME}/toolset-bin/llvm-profdata merge --version
+      llvm-profdata merge --version
     fi
-  - export PATH="${TRAVIS_BUILD_DIR}/llvm-bin:$PATH"
-  - ${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata merge --version
 
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
@@ -98,7 +106,7 @@ install:
   - cmake --version
 before_script:
   - echo $PATH
-  - ${TRAVIS_BUILD_DIR}/llvm-bin/llvm-profdata merge --version
+  - ${HOME}/toolset-bin/llvm-profdata merge --version
   - ${CXX} -v
   - llvm-profdata merge --version
 script:
