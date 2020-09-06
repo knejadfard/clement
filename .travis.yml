@@ -19,7 +19,7 @@ matrix:
             - liblzma-dev
       env:
         - BOOST_VERSION=1.72.0
-        - MATRIX_EVAL="CC=/usr/bin/clang-10 CXX=/usr/bin/clang++-10"
+        - MATRIX_EVAL="CC=/usr/bin/clang-10 && CXX=/usr/bin/clang++-10"
         - TOOLSET=clang
         - CMAKE_OPTS="-DCODE_COVERAGE=ON -DBUILD_DOC=OFF"
         - LFLAGS="-stdlib=libc++ -lc++abi"
@@ -36,7 +36,7 @@ matrix:
             - g++-9
       env:
         - BOOST_VERSION=1.72.0
-        - MATRIX_EVAL="CC=gcc-9 CXX=g++-9"
+        - MATRIX_EVAL="CC=gcc-9 && CXX=g++-9"
         - TOOLSET=gcc
         - CMAKE_OPTS="-DCODE_COVERAGE=OFF -DBUILD_DOC=OFF"
         - LFLAGS=" "
@@ -46,19 +46,17 @@ before_install:
 install:
   - mkdir "${HOME}/toolset-bin"
   - |
-    if [[ $TOOLSET -eq gcc ]]; then
-      ln -s /usr/bin/gcc-9 "${HOME}/toolset-bin/llvm-cov"
-      ln -s /usr/bin/llvm-profdata-10 "${HOME}/toolset-bin/llvm-profdata"
-      export PATH="${HOME}/toolset-bin:$PATH"
+    if [[ "$TOOLSET" == "gcc" ]]; then
+      ln -s /usr/bin/gcc-9 "${HOME}/toolset-bin/gcc"
+      ln -s /usr/bin/g++-9 "${HOME}/toolset-bin/g++"
     fi
   - |
-    if [[ $TOOLSET -eq clang ]]; then
+    if [[ "$TOOLSET" == "clang" ]]; then
       ln -s /usr/bin/llvm-cov-10 "${HOME}/toolset-bin/llvm-cov"
       ln -s /usr/bin/llvm-profdata-10 "${HOME}/toolset-bin/llvm-profdata"
-      export PATH="${HOME}/toolset-bin:$PATH"
       ${HOME}/toolset-bin/llvm-profdata merge --version
-      llvm-profdata merge --version
     fi
+  - export PATH="${HOME}/toolset-bin:$PATH"
 
   ############################################################################
   # All the dependencies are installed in ${HOME}/deps/
