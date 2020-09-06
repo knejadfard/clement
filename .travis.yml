@@ -53,10 +53,10 @@ install:
     fi
   - |
     if [[ "$TOOLSET" == "clang" ]]; then
-      ln -s /usr/bin/clang-10 "${TOOLSET_BIN}/clang"
-      ln -s /usr/bin/clang++-10 "${TOOLSET_BIN}/clang++"
-      ln -s /usr/bin/llvm-cov-10 "${TOOLSET_BIN}/llvm-cov"
-      ln -s /usr/bin/llvm-profdata-10 "${TOOLSET_BIN}/llvm-profdata"
+      ln -s /usr/lib/llvm-10/bin/clang "${TOOLSET_BIN}/clang"
+      ln -s /usr/lib/llvm-10/bin/clang++ "${TOOLSET_BIN}/clang++"
+      ln -s /usr/lib/llvm-10/bin/llvm-cov "${TOOLSET_BIN}/llvm-cov"
+      ln -s /usr/lib/llvm-10/bin/llvm-profdata "${TOOLSET_BIN}/llvm-profdata"
     fi
   - export PATH="${TOOLSET_BIN}:$PATH"
   - ls -lh /usr/bin | grep "llvm"
