@@ -1,6 +1,6 @@
 #include <boost/test/included/unit_test.hpp>
 
-#include "server/logger.hpp"
+#include "clement/logger.hpp"
 #include <fstream>
 #include <string>
 
@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(logger_test_suite)
 BOOST_AUTO_TEST_CASE(log_info) {
     // scoping ensures that it's ok to open the log file for verifying the tests
     {
-        server::logger logger{"test1.log"};
+        clement::logger logger{"test1.log"};
         logger.info("test");
     }
     std::fstream input{"test1.log"};
@@ -20,7 +20,7 @@ BOOST_AUTO_TEST_CASE(log_info) {
 
 BOOST_AUTO_TEST_CASE(log_error) {
     {
-        server::logger logger{"test2.log"};
+        clement::logger logger{"test2.log"};
         logger.error("test");
     }
     std::fstream input{"test2.log"};
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(log_error) {
 
 BOOST_AUTO_TEST_CASE(log_debug) {
     {
-        server::logger logger{"test3.log"};
+        clement::logger logger{"test3.log"};
         logger.debug("test");
     }
     std::fstream input{"test3.log"};

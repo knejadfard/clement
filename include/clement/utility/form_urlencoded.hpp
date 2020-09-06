@@ -5,7 +5,7 @@
 #include <map>
 #include <string>
 
-namespace server {
+namespace clement {
 
     namespace utility {
 
@@ -49,4 +49,4 @@ namespace server {
 
     } // namespace utility
 
-} // namespace server
+} // namespace clement

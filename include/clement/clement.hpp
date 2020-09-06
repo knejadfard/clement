@@ -12,7 +12,7 @@
 #include "writer.hpp"
 #include <boost/beast/http.hpp>
 
-namespace server {
+namespace clement {
 
     namespace http = boost::beast::http;
 

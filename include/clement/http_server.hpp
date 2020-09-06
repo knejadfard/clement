@@ -18,7 +18,7 @@
 #include <thread>
 #include <utility>
 
-namespace server {
+namespace clement {
 
     using tcp = boost::asio::ip::tcp;
     using socket_type = tcp::socket;
@@ -59,7 +59,7 @@ namespace server {
         void listen();
 
         /*
-         * Set the router to be used by this server for dispatching requests to appropriate
+         * Set the router to be used by this clement for dispatching requests to appropriate
          * handler, if there is any.
          */
         void set_router(router& r);
@@ -158,4 +158,4 @@ namespace server {
 
     inline void server::set_router(router& r) { router_ = r; }
 
-} // namespace server
+} // namespace clement

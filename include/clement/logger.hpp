@@ -12,7 +12,7 @@
 #include <boost/log/utility/setup/file.hpp>
 #include <fstream>
 
-namespace server {
+namespace clement {
 
     namespace log = boost::log;
     using text_ostream_backend = log::sinks::text_ostream_backend;
@@ -75,6 +75,6 @@ namespace server {
         }
     };
 
-    logger main_logger{"server.log"};
+    logger main_logger{"clement.log"};
 
-} // namespace server
+} // namespace clement

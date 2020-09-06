@@ -1,6 +1,6 @@
 #pragma once
 
-namespace server {
+namespace clement {
 
     namespace constants {
         constexpr char octet_stream[] = "application/octet-stream";
@@ -11,4 +11,4 @@ namespace server {
         constexpr char unknown[] = "unknown";
     } // namespace constants
 
-} // namespace server
+} // namespace clement

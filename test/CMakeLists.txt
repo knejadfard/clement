@@ -16,7 +16,7 @@ foreach(TEST_SRC ${TEST_SRCS})
         target_compile_options(${TEST_NAME} PRIVATE -std=c++17)
     endif()
 
-    target_link_libraries(${TEST_NAME} PRIVATE server)
+    target_link_libraries(${TEST_NAME} PRIVATE clement)
 
     if(CODE_COVERAGE)
         if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
