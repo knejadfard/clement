@@ -17,6 +17,8 @@ foreach(TEST_SRC ${TEST_SRCS})
     endif()
 
     target_link_libraries(${TEST_NAME} PRIVATE clement)
+    target_link_libraries(${TEST_NAME} PRIVATE Catch2)
+    add_subdirectory(Catch2)
 
     if(CODE_COVERAGE)
         if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
