@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_REQUEST_HPP
+#define CLEMENT_REQUEST_HPP
 
 #include "path.hpp"
 #include "route.hpp"
@@ -180,3 +181,5 @@ namespace clement {
     }
 
 } // namespace clement
+
+#endif

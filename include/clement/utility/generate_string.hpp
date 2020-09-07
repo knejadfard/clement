@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_GENERATE_STRING_HPP
+#define CLEMENT_GENERATE_STRING_HPP
 
 #include <random>
 #include <string>
@@ -23,3 +24,5 @@ namespace clement {
     } // namespace utility
 
 } // namespace clement
+
+#endif

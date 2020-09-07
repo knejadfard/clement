@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 3.5)
 project(unit_tests)
 enable_testing()
 
-file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.cpp)
-add_executable(unit_tests ${TEST_SRCS})
+file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.hpp)
+add_executable(unit_tests ${CMAKE_CURRENT_SOURCE_DIR}/src/unit_tests.cpp ${TEST_SRCS})
 
 target_include_directories(unit_tests PRIVATE ${Boost_INCLUDE_DIRS})
 

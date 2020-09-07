@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_ROUTE_HPP
+#define CLEMENT_ROUTE_HPP
 
 #include "logger.hpp"
 #include "path.hpp"
@@ -61,3 +62,5 @@ namespace clement {
     bool operator!=(route const& lhs, route const& rhs) { return !(lhs == rhs); }
 
 } // namespace clement
+
+#endif

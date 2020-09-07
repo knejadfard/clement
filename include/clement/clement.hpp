@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_CLEMENT_HPP
+#define CLEMENT_CLEMENT_HPP
 
 #include "constants.hpp"
 #include "http_server.hpp"
@@ -17,3 +18,5 @@ namespace clement {
     namespace http = boost::beast::http;
 
 }
+
+#endif

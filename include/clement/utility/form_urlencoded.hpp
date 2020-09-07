@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_FORM_URLENCODED_HPP
+#define CLEMENT_FORM_URLENCODED_HPP
 
 #include "url_utility.hpp"
 #include <boost/tokenizer.hpp>
@@ -50,3 +51,5 @@ namespace clement {
     } // namespace utility
 
 } // namespace clement
+
+#endif
