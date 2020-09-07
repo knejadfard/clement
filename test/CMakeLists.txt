@@ -62,4 +62,6 @@ foreach(TEST_SRC ${TEST_SRCS})
             target_link_libraries(${TEST_NAME} PRIVATE -fprofile-arcs)
         endif()
     endif()
+
+    add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endforeach(TEST_SRC)
