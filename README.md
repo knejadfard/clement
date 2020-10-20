@@ -9,7 +9,7 @@ The build matrix:
 
 # Motivation
 It was a few years back when the library Boost.Beast was released, which builds on top of Boost.Asio to provide low-level facilities for writing networking libraries.
-With the C++ Networking TS in the works (still), and considering the fact that it is based on Boost.Asio, it felt completely natural to have a higher-level C++ library for writing clement and client applications. However, my search at the time did not show anything specific results. While there are some good C++ libraries out there for writing client/clement applications, none of them are built using Boost.Beast. This all led me to think about "What if I write one?" and here we are.
+With the C++ Networking TS in the works (still), and considering the fact that it is based on Boost.Asio, it felt completely natural to have a higher-level C++ library for writing server and client applications. However, my search at the time did not show any results. While there are some good C++ libraries out there for writing client/server applications, none of them are built using Boost.Beast. This led me to think about "What if I write one?" and here we are.
 
 
 # Dependencies
