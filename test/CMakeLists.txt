@@ -3,10 +3,10 @@ cmake_minimum_required(VERSION 3.5)
 project(unit_tests)
 enable_testing()
 
+# Find all .cpp files in the src directory. Each cpp file gets compiled as a separate unit with Catch2 header included
+# in it.
 file(GLOB TEST_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} src/*.hpp)
-add_executable(unit_tests ${CMAKE_CURRENT_SOURCE_DIR}/src/unit_tests.cpp ${TEST_SRCS})
-
-target_include_directories(unit_tests PRIVATE ${Boost_INCLUDE_DIRS})
+add_executable(unit_tests src/tests.cpp ${TEST_SRCS})
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     target_compile_options(unit_tests PRIVATE -std=c++17 -stdlib=libc++)

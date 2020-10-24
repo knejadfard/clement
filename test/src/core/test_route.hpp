@@ -1,7 +1,7 @@
 #include <boost/test/included/unit_test.hpp>
 
-#include "clement/path.hpp"
-#include "clement/route.hpp"
+#include "clement/core/path.hpp"
+#include "clement/core/route.hpp"
 #include <string>
 #include <vector>
 

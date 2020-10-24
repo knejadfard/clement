@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_ROUTER_HPP
+#define CLEMENT_ROUTER_HPP
 
 #include "logger.hpp"
 #include "request.hpp"
@@ -79,3 +80,5 @@ namespace clement {
     using router = basic_router<boost::asio::ip::tcp::socket>;
 
 } // namespace clement
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_RESPONSE_BUILDER_H
+#define CLEMENT_RESPONSE_BUILDER_H
 
 #include <boost/beast/http.hpp>
 #include <string>
@@ -49,3 +50,5 @@ namespace clement {
     using response_builder = basic_response_builder<boost::beast::http::string_body>;
 
 } // namespace clement
+
+#endif

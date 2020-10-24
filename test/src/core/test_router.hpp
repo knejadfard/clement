@@ -4,10 +4,10 @@
 #include <string>
 #include <vector>
 
-#include "clement/request.hpp"
-#include "clement/route.hpp"
-#include "clement/router.hpp"
-#include "clement/writer.hpp"
+#include "clement/core/request.hpp"
+#include "clement/core/route.hpp"
+#include "clement/core/router.hpp"
+#include "clement/core/writer.hpp"
 
 BOOST_AUTO_TEST_SUITE(router_test_suite)
 

@@ -1,8 +1,6 @@
-#include "catch.hpp"
+#include <catch.hpp>
 
-#include "clement/utility/base64.hpp"
-#include <clement/utility/form_urlencoded.hpp>
-#include <clement/utility/generate_string.hpp>
+#include <clement/clement.hpp>
 #include <string>
 
 SCENARIO("Strings can be encoded to base64", "[utility]") {

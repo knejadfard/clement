@@ -1,9 +1,9 @@
-#include "catch.hpp"
+#include <catch.hpp>
+#include <clement/clement.hpp>
 #include <boost/asio/io_context.hpp>
 #include <boost/beast/_experimental/test/stream.hpp>
 #include <boost/beast/http/empty_body.hpp>
 #include <boost/beast/http/parser.hpp>
-#include <clement/request.hpp>
 
 SCENARIO("clement::request can parse requests properly", "[core]") {
     GIVEN("A simple HTTP request header") {

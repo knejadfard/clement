@@ -1,5 +1,5 @@
-#include "catch.hpp"
-#include <clement/path.hpp>
+#include <catch.hpp>
+#include <clement/core/path.hpp>
 
 SCENARIO("path class works as expected", "[core]") {
     std::string path_str1{"p1/p2/p3/p4/"};

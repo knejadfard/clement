@@ -1,6 +1,6 @@
 #include <boost/test/included/unit_test.hpp>
 
-#include "clement/logger.hpp"
+#include "clement/core/logger.hpp"
 #include <fstream>
 #include <string>
 
