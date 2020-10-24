@@ -131,5 +131,5 @@ after_success:
     if [[ "$TOOLSET" == "clang" ]]; then
       cd ${TRAVIS_BUILD_DIR}/build
       make cov-lcov
-      bash <(curl -s https://codecov.io/bash) -f ccov/all_tests.lcov || echo "Codecov did not collect coverage report"
+      bash <(curl -s https://codecov.io/bash) -f cov/unit_tests.lcov || echo "Codecov did not collect coverage report"
     fi
