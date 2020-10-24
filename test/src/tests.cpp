@@ -7,4 +7,5 @@
 
 #include "core/path_tests.hpp"
 #include "core/request_tests.hpp"
+#include "core/logger_tests.hpp"
 #include "utility_tests.hpp"
