@@ -9,5 +9,6 @@
 #include "core/request_tests.hpp"
 #include "core/logger_tests.hpp"
 #include "core/route_tests.hpp"
+#include "core/router_tests.hpp"
 
 #include "utility_tests.hpp"
