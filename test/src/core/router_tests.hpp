@@ -28,9 +28,18 @@ SCENARIO("clement::router is able to route requests correctly", "[core]") {
         r.get("/api/test1", &handler1);
         r.get("/api/test2", &handler2);
 
-        WHEN("The router is requested to find a route for /api/test1") {
-            std::function<void(clement::request&, clement::basic_writer<int>&)> test_handler =
-                r.get_handler(clement::route{"GET", "/api/test1"});
+        WHEN("The router is requested to find a clement::route instance for /api/test1") {
+            clement::route route{"GET", "/api/test1"};
+            auto test_route = r.get_route(route);
+            THEN("The returned clement::route instance has correct HTTP verb and path") {
+                REQUIRE(test_route.verb() == clement::http::verb::get);
+                REQUIRE(test_route.get_path() == "/api/test1");
+            }
+        }
+
+        WHEN("The router is requested to find a handler for /api/test1") {
+            clement::route route{"GET", "/api/test1"};
+            auto test_handler = r.get_handler(route);
             test_handler(parser, writer);
             THEN("The correct handler function gets called") {
                 REQUIRE(val == 1);
