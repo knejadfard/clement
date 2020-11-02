@@ -19,7 +19,7 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
         header_parser.put(test_stream.buffer().data(), ec);
         boost::beast::http::request<boost::beast::http::empty_body> request_header = header_parser.get();
 
-        WHEN("clement::request parses the request header") {
+        WHEN("The request header is parsed") {
             clement::request req;
             req.parse_header(request_header);
             THEN("Request target is parsed correctly") {
@@ -28,9 +28,15 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
             THEN("ContentType header is parsed correctly") {
                 REQUIRE(req.content_type() == "application/json");
             }
+            THEN("The verb of the request is returned correctly as an enum") {
+                REQUIRE(req.verb() == boost::beast::http::verb::get);
+            }
+            THEN("The verb of the request is returned correctly as a std::string") {
+                REQUIRE(req.verb_string() == "GET");
+            }
         }
 
-        WHEN("clement::request is asked for a header that it does not have") {
+        WHEN("A non-existing header is retrieved from the request") {
             clement::request req;
             req.parse_header(request_header);
             std::string result = req.header("Random-Header");
@@ -39,7 +45,7 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
             }
         }
 
-        WHEN("Retrieving all headers from a clement::request object") {
+        WHEN("All headers are retrieved from the request") {
             clement::request req;
             req.parse_header(request_header);
             auto headers = req.headers();
