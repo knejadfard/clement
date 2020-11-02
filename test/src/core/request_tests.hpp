@@ -38,5 +38,18 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
                 REQUIRE(result.empty());
             }
         }
+
+        WHEN("Retrieving all headers from a clement::request object") {
+            clement::request req;
+            req.parse_header(request_header);
+            auto headers = req.headers();
+            THEN("The returned headers are correct") {
+                REQUIRE(headers.size() == 4);
+                REQUIRE(headers.at(boost::beast::http::field::host) == "localhost");
+                REQUIRE(headers.at(boost::beast::http::field::user_agent) == "test");
+                REQUIRE(headers.at(boost::beast::http::field::content_length) == "0");
+                REQUIRE(headers.at(boost::beast::http::field::content_type) == "application/json");
+            }
+        }
     }
 }
