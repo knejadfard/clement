@@ -8,12 +8,13 @@
 SCENARIO("clement::request can parse requests properly", "[core]") {
     GIVEN("A simple HTTP request header") {
         boost::asio::io_context ioc;
-        boost::beast::test::stream test_stream{ioc, "GET / HTTP/1.1\r\n"
+        boost::beast::test::stream test_stream{ioc, "GET /api?q1=value1 HTTP/1.1\r\n"
                                                     "Host: localhost\r\n"
                                                     "User-Agent: test\r\n"
                                                     "Content-Length: 0\r\n"
                                                     "Content-Type: application/json\r\n"
-                                                    "\r\n"};
+                                                    "\r\n"
+                                                    "This is the body of the request"};
         boost::beast::http::request_parser<boost::beast::http::empty_body> header_parser;
         boost::system::error_code ec;
         header_parser.put(test_stream.buffer().data(), ec);
@@ -23,7 +24,7 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
             clement::request req;
             req.parse_header(request_header);
             THEN("Request target is parsed correctly") {
-                REQUIRE(req.target() == "/");
+                REQUIRE(req.target() == "/api");
             }
             THEN("ContentType header is parsed correctly") {
                 REQUIRE(req.content_type() == "application/json");
@@ -55,6 +56,16 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
                 REQUIRE(headers.at(boost::beast::http::field::user_agent) == "test");
                 REQUIRE(headers.at(boost::beast::http::field::content_length) == "0");
                 REQUIRE(headers.at(boost::beast::http::field::content_type) == "application/json");
+            }
+        }
+
+        WHEN("The query parameters are retrieved from the request") {
+            clement::request req;
+            req.parse_header(request_header);
+            auto qparams = req.query_params();
+            THEN("The returned query parameters are correct") {
+                REQUIRE(qparams.size() == 1);
+                REQUIRE(qparams.at("q1") == "value1");
             }
         }
     }
