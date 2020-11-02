@@ -29,5 +29,14 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
                 REQUIRE(req.content_type() == "application/json");
             }
         }
+
+        WHEN("clement::request is asked for a header that it does not have") {
+            clement::request req;
+            req.parse_header(request_header);
+            std::string result = req.header("Random-Header");
+            THEN("An empty std::string instance is returned") {
+                REQUIRE(result.empty());
+            }
+        }
     }
 }
