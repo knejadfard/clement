@@ -6,7 +6,7 @@
 #include <boost/beast/http/parser.hpp>
 
 SCENARIO("clement::request can parse requests properly", "[core]") {
-    GIVEN("A simple HTTP request header") {
+    GIVEN("An HTTP request with target GET /api?q1=value1") {
         boost::asio::io_context ioc;
         boost::beast::test::stream test_stream{ioc, "GET /api?q1=value1 HTTP/1.1\r\n"
                                                     "Host: localhost\r\n"
@@ -20,34 +20,43 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
         header_parser.put(test_stream.buffer().data(), ec);
         boost::beast::http::request<boost::beast::http::empty_body> request_header = header_parser.get();
 
-        WHEN("The request header is parsed") {
-            clement::request req;
-            req.parse_header(request_header);
-            THEN("Request target is parsed correctly") {
-                REQUIRE(req.target() == "/api");
-            }
+        clement::request req;
+        req.parse_header(request_header);
+
+        WHEN("The request target is retrieved") {
+            std::string test_value = req.target();
+            THEN("It has the correct value") { REQUIRE(test_value == "/api"); }
+        }
+
+        WHEN("The Content-Type header value is retrieved") {
+            std::string test_value = req.content_type();
             THEN("ContentType header is parsed correctly") {
-                REQUIRE(req.content_type() == "application/json");
-            }
-            THEN("The verb of the request is returned correctly as an enum") {
-                REQUIRE(req.verb() == boost::beast::http::verb::get);
-            }
-            THEN("The verb of the request is returned correctly as a std::string") {
-                REQUIRE(req.verb_string() == "GET");
+                REQUIRE(test_value == "application/json");
             }
         }
 
-        WHEN("The request target does not have any path parameters") {
-            clement::request req;
-            req.parse_header(request_header);
-            THEN("Retrieving path parameters returns an empty container") {
-                REQUIRE(req.path_params().size() == 0);
+        WHEN("The verb of the request is retrieved as an enum value") {
+            auto test_value = req.verb();
+            THEN("The verb of the request is returned correctly as an enum") {
+                REQUIRE(test_value == boost::beast::http::verb::get);
+            }
+        }
+
+        WHEN("The verb of the request is retrieved as a std::string value") {
+            std::string test_value = req.verb_string();
+            THEN("The verb of the request is returned correctly as a std::string") {
+                REQUIRE(test_value == "GET");
+            }
+        }
+
+        WHEN("The path parameters are retrieved from the request") {
+            int test_value = req.path_params().size();
+            THEN("The returned container is empty") {
+                REQUIRE(test_value == 0);
             }
         }
 
         WHEN("A non-existing header is retrieved from the request") {
-            clement::request req;
-            req.parse_header(request_header);
             std::string result = req.header("Random-Header");
             THEN("An empty std::string instance is returned") {
                 REQUIRE(result.empty());
@@ -55,8 +64,6 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
         }
 
         WHEN("All headers are retrieved from the request") {
-            clement::request req;
-            req.parse_header(request_header);
             auto headers = req.headers();
             THEN("The returned headers are correct") {
                 REQUIRE(headers.size() == 4);
@@ -68,8 +75,6 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
         }
 
         WHEN("The query parameters are retrieved from the request") {
-            clement::request req;
-            req.parse_header(request_header);
             auto qparams = req.query_params();
             THEN("The returned query parameters are correct") {
                 REQUIRE(qparams.size() == 1);
