@@ -37,6 +37,14 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
             }
         }
 
+        WHEN("The request target does not have any path parameters") {
+            clement::request req;
+            req.parse_header(request_header);
+            THEN("Retrieving path parameters returns an empty container") {
+                REQUIRE(req.path_params().size() == 0);
+            }
+        }
+
         WHEN("A non-existing header is retrieved from the request") {
             clement::request req;
             req.parse_header(request_header);
