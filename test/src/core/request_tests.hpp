@@ -4,6 +4,7 @@
 #include <boost/beast/_experimental/test/stream.hpp>
 #include <boost/beast/http/empty_body.hpp>
 #include <boost/beast/http/parser.hpp>
+#include <sstream>
 
 SCENARIO("clement::request can parse requests properly", "[core]") {
     GIVEN("An HTTP request with target GET /api?q1=value1") {
@@ -11,17 +12,27 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
         boost::beast::test::stream test_stream{ioc, "GET /api?q1=value1 HTTP/1.1\r\n"
                                                     "Host: localhost\r\n"
                                                     "User-Agent: test\r\n"
-                                                    "Content-Length: 0\r\n"
+                                                    "Content-Length: 31\r\n"
                                                     "Content-Type: application/json\r\n"
                                                     "\r\n"
                                                     "This is the body of the request"};
-        boost::beast::http::request_parser<boost::beast::http::empty_body> header_parser;
-        boost::system::error_code ec;
-        header_parser.put(test_stream.buffer().data(), ec);
-        boost::beast::http::request<boost::beast::http::empty_body> request_header = header_parser.get();
+
+        boost::system::error_code error_code;
+
+        boost::beast::http::request_parser<boost::beast::http::dynamic_body> request_parser;
+        // Have request parser eagerly read the body of the request too, since this is a test and
+        // we know this is fine.
+        request_parser.eager(true);
+        // Dump the content from test stream into request parser, and parse all of it including body
+        request_parser.put(test_stream.buffer().cdata(), error_code);
+        REQUIRE((bool) error_code == false);
+
+        boost::beast::http::request<boost::beast::http::dynamic_body> request =
+            request_parser.get();
 
         clement::request req;
-        req.parse_header(request_header);
+        req.parse_header(request);
+        req.read_body(request);
 
         WHEN("The request target is retrieved") {
             std::string test_value = req.target();
@@ -69,7 +80,7 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
                 REQUIRE(headers.size() == 4);
                 REQUIRE(headers.at(boost::beast::http::field::host) == "localhost");
                 REQUIRE(headers.at(boost::beast::http::field::user_agent) == "test");
-                REQUIRE(headers.at(boost::beast::http::field::content_length) == "0");
+                REQUIRE(headers.at(boost::beast::http::field::content_length) == "31");
                 REQUIRE(headers.at(boost::beast::http::field::content_type) == "application/json");
             }
         }
@@ -79,6 +90,13 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
             THEN("The returned query parameters are correct") {
                 REQUIRE(qparams.size() == 1);
                 REQUIRE(qparams.at("q1") == "value1");
+            }
+        }
+
+        WHEN("The stream representation of request body is retrieved") {
+            std::string test_value = req.stream().str();
+            THEN("It has the correct content") {
+                REQUIRE(test_value == "This is the body of the request");
             }
         }
     }
