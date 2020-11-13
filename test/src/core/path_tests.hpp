@@ -33,7 +33,7 @@ SCENARIO("clement::path works as expected", "[core]") {
     GIVEN("Two equivalent instances of path") {
         clement::path p1{"/api/test"};
         clement::path p2{"/api/test"};
-        WHEN("The two path instances are compared") {
+        WHEN("The two path instances are compared using operator==") {
             bool result = p1 == p2;
             THEN("The result is true") { REQUIRE(result == true); }
         }
@@ -42,7 +42,7 @@ SCENARIO("clement::path works as expected", "[core]") {
     GIVEN("Two equivalent instances of path with one of them missing leading /") {
         clement::path p1{"/api/test"};
         clement::path p2{"api/test"};
-        WHEN("The two path instances are compared") {
+        WHEN("The two path instances are compared using operator==") {
             bool result = p1 == p2;
             THEN("The result is true") { REQUIRE(result == true); }
         }
@@ -51,9 +51,20 @@ SCENARIO("clement::path works as expected", "[core]") {
     GIVEN("Two non-equal instances of path") {
         clement::path p1{"/api/test1"};
         clement::path p2{"/api/test2"};
-        WHEN("The two path instances are compared") {
+        WHEN("The two path instances are compared using operator==") {
             bool result = p1 == p2;
             THEN("The result is false") { REQUIRE(result == false); }
+        }
+    }
+
+    GIVEN("Two instances of path with different number of fragments") {
+        clement::path p1{"/api/v1/endpoint"};
+        clement::path p2{"/api/endpoint"};
+        WHEN("The two path instances are compared using operator==") {
+            bool result = p1 == p2;
+            THEN("The result is false") {
+                REQUIRE(result == false);
+            }
         }
     }
 
