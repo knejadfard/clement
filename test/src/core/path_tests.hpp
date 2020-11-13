@@ -1,5 +1,6 @@
 #include <catch.hpp>
 #include <clement/core/path.hpp>
+#include <sstream>
 
 SCENARIO("clement::path works as expected", "[core]") {
     std::string path_str1{"p1/p2/p3/p4/"};
@@ -53,6 +54,61 @@ SCENARIO("clement::path works as expected", "[core]") {
         WHEN("The two path instances are compared") {
             bool result = p1 == p2;
             THEN("The result is false") { REQUIRE(result == false); }
+        }
+    }
+
+    GIVEN("A path object that is default initialized without any path fragments") {
+        clement::path p;
+        WHEN("operator/ is used to set the path fragments using std::string instances") {
+            std::string fragment1{"api"}, fragment2{"v1"};
+            p = p / fragment1 / fragment2;
+            THEN("The resulting path correctly represents the combination of path fragments") {
+                REQUIRE(p.get_string() == "/api/v1");
+            }
+        }
+    }
+
+    GIVEN("A path object that is default initialized with path fragments") {
+        clement::path p{"/api/v1"};
+        WHEN("operator/ is used to set the path fragments using std::string instances") {
+            std::string fragment{"endpoint"};
+            p = p / fragment;
+            THEN("The resulting path correctly represents the combination of path fragments") {
+                REQUIRE(p.get_string() == "/api/v1/endpoint");
+            }
+        }
+    }
+
+    GIVEN("A path object that is default initialized without any path fragments") {
+        clement::path p;
+        WHEN("operator/ is used to set the path fragments using clement::path instances") {
+            clement::path fragment1{"api"}, fragment2{"v1"};
+            p = p / fragment1 / fragment2;
+            THEN("The resulting path correctly represents the combination of path fragments") {
+                REQUIRE(p.get_string() == "/api/v1");
+            }
+        }
+    }
+
+    GIVEN("A path object that is default initialized with path fragments") {
+        clement::path p{"/api/v1"};
+        WHEN("operator/ is used to set the path fragments using a clement::path that has multiple fragments") {
+            clement::path fragment{"path/endpoint"};
+            p = p / fragment;
+            THEN("The resulting path correctly represents the combination of path fragments") {
+                REQUIRE(p.get_string() == "/api/v1/path/endpoint");
+            }
+        }
+    }
+
+    GIVEN("A path that is default initialized with path fragments") {
+        clement::path p{"/api/v1/endpoint"};
+        WHEN("operator<< is used to dump the path fragments into a std::ostream") {
+            std::stringstream stream;
+            stream << p;
+            THEN("The stream content matches the string version of the path") {
+                REQUIRE(stream.str() == p.get_string());
+            }
         }
     }
 }
