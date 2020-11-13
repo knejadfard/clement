@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_URL_UTILITY_HPP
+#define CLEMENT_URL_UTILITY_HPP
 
 #include <exception>
 #include <iomanip>
@@ -68,3 +69,5 @@ namespace clement {
     } // namespace utility
 
 } // namespace clement
+
+#endif

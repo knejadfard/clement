@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_REQUEST_HPP
+#define CLEMENT_REQUEST_HPP
 
 #include "path.hpp"
 #include "route.hpp"
@@ -41,9 +42,11 @@ namespace clement {
       public:
         request() {}
 
-        void parse_header(boost::beast::http::request<boost::beast::http::empty_body>&);
+        template <typename Body>
+        void parse_header(boost::beast::http::request<Body>&);
 
-        void read_body(boost::beast::http::request<boost::beast::http::dynamic_body>&);
+        template <typename Body>
+        void read_body(boost::beast::http::request<Body>&);
 
         void header(boost::beast::http::field const& name, std::string const& value) {
             headers_[name] = value;
@@ -89,14 +92,16 @@ namespace clement {
         route mapped_route() const { return mapped_route_; }
     };
 
-    void request::parse_header(boost::beast::http::request<boost::beast::http::empty_body>& request_header) {
+    template <typename Body>
+    void request::parse_header(boost::beast::http::request<Body>& request_header) {
         read_fields(request_header);
         parse_target(request_header);
         verb_ = request_header.method();
         parse_content_type(request_header);
     }
 
-    void request::read_body(boost::beast::http::request<boost::beast::http::dynamic_body>& request_body) {
+    template <typename Body>
+    void request::read_body(boost::beast::http::request<Body>& request_body) {
         boost::beast::multi_buffer body_buffer = request_body.body();
         // TODO what if the request body should not be treated as text/string?
         // TODO performance concerns: what if the body is too large? Needs performance tests.
@@ -180,3 +185,5 @@ namespace clement {
     }
 
 } // namespace clement
+
+#endif

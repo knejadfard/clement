@@ -1,3 +1,6 @@
+#ifndef CLEMENT_HTTP_SERVER_HPP
+#define CLEMENT_HTTP_SERVER_HPP
+
 #include "logger.hpp"
 #include "request.hpp"
 #include "router.hpp"
@@ -159,3 +162,5 @@ namespace clement {
     inline void server::set_router(router& r) { router_ = r; }
 
 } // namespace clement
+
+#endif

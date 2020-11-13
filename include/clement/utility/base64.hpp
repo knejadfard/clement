@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_BASE64_HPP
+#define CLEMENT_BASE64_HPP
 
 #include <boost/algorithm/string.hpp>
 #include <boost/archive/iterators/base64_from_binary.hpp>
@@ -27,3 +28,5 @@ namespace clement {
     } // namespace utility
 
 } // namespace clement
+
+#endif

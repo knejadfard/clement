@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_LOGGER_HPP
+#define CLEMENT_LOGGER_HPP
 
 #include <boost/core/null_deleter.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -78,3 +79,5 @@ namespace clement {
     logger main_logger{"clement.log"};
 
 } // namespace clement
+
+#endif

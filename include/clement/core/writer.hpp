@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_WRITER_HPP
+#define CLEMENT_WRITER_HPP
 
 #include <boost/asio/ip/tcp.hpp>
 #include <boost/beast/http.hpp>
@@ -24,3 +25,5 @@ namespace clement {
     using socket_writer = basic_writer<boost::asio::ip::tcp::socket>;
 
 } // namespace clement
+
+#endif

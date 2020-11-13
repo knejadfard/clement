@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CLEMENT_PATH_HPP
+#define CLEMENT_PATH_HPP
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <ostream>
@@ -136,3 +137,5 @@ namespace clement {
     }
 
 } // namespace clement
+
+#endif
