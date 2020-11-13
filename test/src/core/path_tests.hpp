@@ -68,6 +68,17 @@ SCENARIO("clement::path works as expected", "[core]") {
         }
     }
 
+    GIVEN("Two instances of path that have different fragments") {
+        clement::path p1{"/api/v1/endpoint"};
+        clement::path p2{"/api/v2/endpoint"};
+        WHEN("The two path instances are compared using operator!=") {
+            bool result = p1 != p2;
+            THEN("The result is true") {
+                REQUIRE(result == true);
+            }
+        }
+    }
+
     GIVEN("A path object that is default initialized without any path fragments") {
         clement::path p;
         WHEN("operator/ is used to set the path fragments using std::string instances") {
