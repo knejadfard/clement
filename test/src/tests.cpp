@@ -11,5 +11,6 @@
 #include "core/route_tests.hpp"
 #include "core/router_tests.hpp"
 #include "core/writer_tests.hpp"
+#include "core/http_server_tests.hpp"
 
 #include "utility_tests.hpp"
