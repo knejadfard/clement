@@ -111,4 +111,14 @@ SCENARIO("clement::path works as expected", "[core]") {
             }
         }
     }
+
+    GIVEN("A path object that is initialized with fragments") {
+        clement::path p{"/api/v1/endpoint"};
+        WHEN("It is converted to a std::string") {
+            std::string result = (std::string) p;
+            THEN("The resulting string is correct") {
+                REQUIRE(result == "/api/v1/endpoint");
+            }
+        }
+    }
 }
