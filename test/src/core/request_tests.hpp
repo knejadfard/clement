@@ -34,6 +34,9 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
         req.parse_header(request);
         req.read_body(request);
 
+        clement::route mapped_route{boost::beast::http::verb::get, clement::path{"/api"}};
+        req.mapped_route(mapped_route);
+
         WHEN("The request target is retrieved") {
             std::string test_value = req.target();
             THEN("It has the correct value") { REQUIRE(test_value == "/api"); }
@@ -93,10 +96,56 @@ SCENARIO("clement::request can parse requests properly", "[core]") {
             }
         }
 
+        WHEN("The path parameters container is retrieved from request") {
+            auto params = req.path_params();
+            THEN("It is empty") {
+                REQUIRE(params.size() == 0);
+            }
+        }
+
         WHEN("The stream representation of request body is retrieved") {
             std::string test_value = req.stream().str();
             THEN("It has the correct content") {
                 REQUIRE(test_value == "This is the body of the request");
+            }
+        }
+    }
+
+    GIVEN("An HTTP request that has a path parameter in its target") {
+        boost::asio::io_context ioc;
+        boost::beast::test::stream test_stream{ioc, "GET /api/path1/value/path2 HTTP/1.1\r\n"
+                                                    "Host: localhost\r\n"
+                                                    "User-Agent: test\r\n"
+                                                    "Content-Length: 31\r\n"
+                                                    "Content-Type: application/json\r\n"
+                                                    "\r\n"
+                                                    "This is the body of the request"};
+
+        boost::system::error_code error_code;
+
+        boost::beast::http::request_parser<boost::beast::http::dynamic_body> request_parser;
+        // Have request parser eagerly read the body of the request too, since this is a test and
+        // we know this is fine.
+        request_parser.eager(true);
+        // Dump the content from test stream into request parser, and parse all of it including body
+        request_parser.put(test_stream.buffer().cdata(), error_code);
+        REQUIRE((bool) error_code == false);
+
+        boost::beast::http::request<boost::beast::http::dynamic_body> request =
+            request_parser.get();
+
+        clement::request req;
+        req.parse_header(request);
+        req.read_body(request);
+
+        clement::route mapped_route{boost::beast::http::verb::get, clement::path{"/api/path1/:var/path2"}};
+        req.mapped_route(mapped_route);
+
+        WHEN("The path parameters container is retrieved from request") {
+            auto params = req.path_params();
+            THEN("It contains all path parameters that were present in target path") {
+                REQUIRE(params.size() == 1);
+                REQUIRE(params["var"] == "value");
             }
         }
     }
